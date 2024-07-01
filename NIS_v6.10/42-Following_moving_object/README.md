@@ -22,7 +22,7 @@ This example is shown on simulated devices - it doesn't require any real hardwar
 For the camera simulator we will use an artificial time-lapse:
 [bouncing_ball.nd2](bouncing_ball.nd2)
 
-This is the maximum intesity projection of the bouncing ball: a ball moves from right to left with a bouncing effect.
+This is the maximum intensity projection of the bouncing ball: a ball moves from right to left with a bouncing effect.
 
 ![sample movie: bouncing_ball.nd2](images/02-sample_movie_maxip.png)
 
@@ -50,7 +50,7 @@ With following tasks:
 > - to click the "Reset Frame Position" button before running experiments.
 > - to set the stage position roughly in the middle of the scan area.
 
-Run it, check the preview and in the reseults go to the Grid view and enable Statistics. 
+Run it, check the preview and in the results go to the Grid view and enable Statistics. 
 After scrolling to the right you can see from the X and Y stage coordinates (and statistics) that the stage is not moving.
 
 ![Results: Acquired bouncing ball](images/12-AcquireBouncingBall_results.png)
@@ -61,7 +61,7 @@ The final JOB: [0-AcquireBouncingBall.bin](0-AcquireBouncingBall.bin)
 
 ### 1. Create a GA3 recipe
 
-In order to track the object we have to get its absolute stage coordinates. For this we will use the GA3 on the acquired timelapse.
+In order to track the object we have to get its absolute stage coordinates. For this we will use the GA3 on the acquired time lapse.
 
 In the GA3 recipe (menu: Image -> New GA3 recipe...) use following nodes:
 
@@ -71,7 +71,7 @@ In the GA3 recipe (menu: Image -> New GA3 recipe...) use following nodes:
 
 We save everything (by connecting the nodes to save nodes): original image, detected binary object (for validation) and the object coordinates.
 
-We connected BrightSpots node to Fluo (meaning all fluorescence channels) because we want to be very generic about the inputs. 
+We connected BrightSpots node to "Fluo" (meaning all fluorescence channels) because we want to be very generic about the inputs. 
 BrightSpots node makes average intensity if the channel has more components. For different modality (e.g. brightfield) the threshold may be more appropriate.
 
 ![GA3 recipe: largest object coordinates](images/14-ga3_bouncing_ball_graph.png)
@@ -211,8 +211,8 @@ prevValid = 1;
 ```
 
 Let's break it down:
-1. Declare two varibles deltaX and deltaY and set them to zero (0).
-2. If we have a previous position (prevValid is not zero), everything betwen the '{' and '}' (called a *block*) will be executed. Otherwise (prevValid *is* zero) the whole block will be skipped. 
+1. Declare two variables deltaX and deltaY and set them to zero (0).
+2. If we have a previous position (prevValid is not zero), everything between the '{' and '}' (called a *block*) will be executed. Otherwise (prevValid *is* zero) the whole block will be skipped. 
 Inside the block we calculate the relative movement (deltaX and deltaY). Then we move the stage *by* deltaX and deltaY. 
 We move *by* literally by taking the current position (Devices.X and Devices.Y), adding the relative movement (deltaX and deltaY) to it and setting it back as the current position to (Devices.X and Devices.Y).
 3. We save the the object position to prevX and prevY and set prevValid to 1.
@@ -255,7 +255,7 @@ Versus the uncorrected X, Y coordinates where the object motion is compensated t
 
 ### absolute
 
-For absolute version of the JOB we have to add two tasks relevant to the wellplate, a well loop and to sligthly modify the expressions.
+For absolute version of the JOB we have to add two tasks relevant to the well-plate, a well loop and to slightly modify the expressions.
 
 Specifically:
 - We add plate definition at the beginning and select a plate (e.g. 96-well plate).
@@ -263,7 +263,7 @@ Specifically:
 - Change the Total duration number of loops in the Time loop to 48 (because we have 96 frames in the ND2 file in the camera simulator).
 - Inside the Time loop we add a well loop.
 - Inside the Well loop we add the move to center task and all the remaining tasks (Capture, GA3, ExpressionX, ExpressionY).
-- We modify the expression in ExpresssionX and ExpressionY as follows:
+- We modify the expression in ExpressionX and ExpressionY as follows:
 
 ExpressionX:
 ```c
@@ -286,7 +286,7 @@ The final JOB : [4-FollowBouncingBallInWellsAbs.bin](4-FollowBouncingBallInWells
 
 For relative version of the JOB we must create and store the prevX, prevY and prevValid variables for each well. 
 As we have at maximum 96 wells (in this example) we will create arrays of size 96 for all variables called lastX, lastY and lastValid.
-We will intialize the variables as shown below.
+We will initialize the variables as shown below.
 
 > [!NOTE]
 > You can set the same value to all array elements be writing just one value. It will get copied automatically to all elements.

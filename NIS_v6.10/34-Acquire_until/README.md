@@ -1,6 +1,11 @@
 # Acquire until a condition is met
 
-The goal of this example is to run an experiment until a condition is met. 
+The goal of this example is to run an experiment until a condition is met.
+
+In the following examples we will use  the Number of cells or the Standard Error (SE) of the equivalent diameter feature as the termination condition. There are many other examples which use different condition. Acquire until:
+- most of the cells are dead,
+- cells are bleached,
+- ...
 
 > [!NOTE]
 > This example is shown on simulated devices - it doesn't require any real hardware for trying it out.
@@ -21,7 +26,7 @@ For camera simulator we will use an artificial two-frame time-lapse. The second 
 
 [synthetic-objects-timelapse.nd2](synthetic-objects-timelapse.nd2)
 
-![smaple movie: synthetic-objects-timelapse.nd2](images/01-synthetic-timelapse.png)
+![sample movie: synthetic-objects-timelapse.nd2](images/01-synthetic-timelapse.png)
 
 Open it in NIS Elements and set it into the camera simulator by clicking on "Load current ND" in the Camera Simulator settings.
 
@@ -52,7 +57,7 @@ Create a simple JOB with only two tasks:
 
 ![JOB: AcquireCells](images/10-AcquireCells_job.png)
 
-Save the JOB and run it. Finish it manually (remembre it has infinite duration), after couple of frames are acquired. Then, open the ND2 file by clicking on any row in the JOB results table.
+Save the JOB and run it. Finish it manually (remember it has infinite duration), after couple of frames are acquired. Then, open the ND2 file by clicking on any row in the JOB results table.
 
 ![Acquired time-lapse](images/12-AcquireCells_image.png)
 
@@ -96,7 +101,7 @@ Add the following tasks to it:
 - GA3 task after the Capture task,
 - Expression task after the GA3 task to accumulate the totalCellCount
 - If task to check if the total count is met yet and
-- Break task iside the If task block to end the loop.
+- Break task inside the If task block to end the loop.
 
 ![JOB: Acquire 1k cells](images/20-Acquire1kCells_job.png)
 
@@ -121,7 +126,7 @@ In the Expression task we will accumulate the totalCellCount variable:
 totalCellCount = totalCellCount + Job.CellCount.Tables.Records.CellCount.First
 ```
 
-Meaning literally: Take the number in `totalCellCount` (initially zero), add the cellCount coming from the GA3 to it and set it bacck to `totalCellCount` variable.
+Meaning literally: Take the number in `totalCellCount` (initially zero), add the cellCount coming from the GA3 to it and set it back to `totalCellCount` variable.
 
 In order to understand the `Job.CellCount.Tables.Records.CellCount.First` term we can break it down into:
 - `Job.CellCount` part which represents the GA3 task named CellCount in this Job,
@@ -144,7 +149,7 @@ Meaning: when the variable `totalCellCount` is greater or equal than 1000 (= "ye
 
 ![JOB: If task](images/24-if_task.png)
 
-When the break is executed it will break from the Timlapse loop and efectively end the JOB as there is nothing after the loop task.
+When the break is executed it will break from the Time lapse loop and effectively end the JOB as there is nothing after the loop task.
 
 We expect the JOB to acquire 20 frames as one frame has around 50 cells. Let's try it out and run the JOB. The results show that the acquisition actually stopped after 20 frames.
 
@@ -185,7 +190,7 @@ We made a convenience macro function to perform this calculation:
 int UpdateMeanAndVariance(int* totalN, double* totalMean, double* totalVar, int n, double mean, double* var);
 ```
 
-Now that we have figured out the statistics, we will reuse the GA3 from the previous example and sligtly update it. We need to output three statistics: CellCount (the $n_c$), MeanEqDia (the $\mu_c$) and VarEqDia (the $\sigma_c$). Actually only two, because CellCount we already have. As these statistics are all per frame, we will just add two new columns in the same ObjectCount node:
+Now that we have figured out the statistics, we will reuse the GA3 from the previous example and slightly update it. We need to output three statistics: CellCount (the $n_c$), MeanEqDia (the $\mu_c$) and VarEqDia (the $\sigma_c$). Actually only two, because CellCount we already have. As these statistics are all per frame, we will just add two new columns in the same ObjectCount node:
 
 ![GA3 recipe: object count node](images/33-GA3_ObjectCount.png)
 
@@ -229,22 +234,22 @@ When we run the JOB we see it has 8 frames and that it needed 408 objects to get
 ![GA3: check SE results](images/38-GA3_CheckSE_results.png)
 
 The GA3 for calculating the SE of all Object EqDiameter is straightforward:
-- connect the Object Measureent node to binaries and add EqDiameter feature,
-- apped Accumulate node over time and 
+- connect the Object Measurement node to binaries and add EqDiameter feature,
+- append Accumulate node over time and 
 - append Reduce node and select StdErr.
 
 ![GA3: recipe](images/37-GA3_CheckSE.png)
 
-The GA3 recipe to chek the rsult: [CheckSE.ga3](CheckSE.ga3)
+The GA3 recipe to check the result: [CheckSE.ga3](CheckSE.ga3)
 
 ## Stop acquiring wells that reached a given Standard Error (SE)
 
-We will further extend the previous example to a wellplate and calculate the SE (and the relevant statistics) for every well. 
-In the well loop we willcheck the calculated SE in every well and skip it if the SE is below the given threshold.
-The well loop itself is in the time loop tahat is already in the JOB.
+We will further extend the previous example to a well-plate and calculate the SE (and the relevant statistics) for every well. 
+In the well loop we will check the calculated SE in every well and skip it if the SE is below the given threshold.
+The well loop itself is in the time loop that is already in the JOB.
 We have to keep track of the visited wells and stop (break from the time loop) when we are skipping all wells.
 
-We reuse the GA3 recipe from the previous example witout any change.
+We reuse the GA3 recipe from the previous example without any change.
 
 In the JOB we have to make some changes though. 
 Lets start with the Variables task where we change all variables to arrays (of 96 elements) and add one more:
@@ -254,7 +259,7 @@ Lets start with the Variables task where we change all variables to arrays (of 9
 ![JOB Variables](images/41-Variables.png)
 
 Then we modify the rest of the JOB as follows:
-- Plate definition task goes below the Varibales task,
+- Plate definition task goes below the Variables task,
 - insert the Well selection below it and select two wells only,
 - the Well loop task goes inside the time loop,
 - before the well loop (inside the time loop) add Expression task and set the variable wellsVisited to 0 in it
@@ -283,7 +288,7 @@ wellsVisited = wellsVisited + 1;
 > [!Note]
 > Currently, the NIS Elements macro has a syntax limitation. Following code is perfectly valid in c but it will not work in the NIS Elements macro:\
 > `UpdateMeanAndVariance(&totalCounts[i], &totalMeans[i], &totalVars[i], n, mean, var);` \
-> To make it work use the pointer synax instead:\
+> To make it work use the pointer syntax instead:\
 > `UpdateMeanAndVariance(totalCounts + i, totalMeans + i, totalVars + i, n, mean, var);`
 
 ![JOB](images/40-AcquireWellToGivenEqDiaSE_job.png)
@@ -295,13 +300,13 @@ After we run the example we get the results and can check the SE per well:
 Final JOB: [3-AcquireWellToGivenEqDiaSE.](3-AcquireWellToGivenEqDiaSE.bin)
 
 To get below SE < 0.1 it took 8 and 9 frames for the two wells and 384 and 480 objects respectively.
-This is because the simulator has two frames - one with more wells than the other - and as we acquired only two wells one had constantly more objcts for every capture than the other.
+This is because the simulator has two frames - one with more wells than the other - and as we acquired only two wells one had constantly more objects for every capture than the other.
 
 ![GA3 Check well SE results](images/46-GA3_CheckWellSE_results.png)
 
 The GA3 for checking the SE had to be slightly modified:
 - AccumRecords should be over *all* loops (Time and Well loop) and
-- Reduce node should group over multipoint index in order to reduce over it. 
+- Reduce node should group over multi-point index in order to reduce over it. 
 
 ![GA3: recipe](images/47-GA3_CheckWellSE.png)
 
