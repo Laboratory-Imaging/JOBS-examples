@@ -1,6 +1,7 @@
 # Simulated Nikon Ti2 with camera simulator
 
 ## 1. device manager setup
+
 - Nikon Ti2 Simulator
 - Simulator 
 - DIA Lamp
@@ -14,6 +15,14 @@ In Device manager select the camera "Simulator File". Then select "mono camera":
 
 Add EPI light source:
 
+Right-click on the upper lapp and select "Configure..."
+
+![Configure upper LAPP](images/dm_ti2_microscope_lapp_upper.png)
+
+Add the EPI by dragging it from the list on the left to the top position.
+
+![LAPP EPI](images/dm_ti2_microscope_lapp_epi.png)
+
 ![Select EPI light in device manager](images/dm_add_dledi.png)
 
 ## 2. Camera setup
@@ -21,6 +30,8 @@ Add EPI light source:
 Camera simulator plays a provided ND2 file in a loop.
 
 ![Camera simulator](images/camera_simulator_settings.png)
+
+| :exclamation: Make sure to uncheck the "File metadata" to use the current microscope settings.|
 
 Set some mono ND2 file and check the live (menu: Acquire -> Live Fast).
 
@@ -38,24 +49,14 @@ Add some filters into Turret 1:
 
 ## 4. Objectives
 
-Check that objectives are calibrated (the calibrations are taken form Hamamtsu simulator):
+Check that objectives are calibrated (the calibrations are taken form Hamamatsu simulator):
 
 ![Objective calibration](images/Objectives.png)
-
-Examples of reasonable calibrations by objective magnifications for 2k x 2k images:
-
-| Magnification [x] | Calibration [µm] |
-|-------------------|------------------|
-| 2                 | 3.250            |
-| 10                | 0.650            |
-| 20                | 0.325            |
-| 40                | 0.163            |
-| 60                | 0.108            |
-| 100               | 0.065            |
 
 Each example will state what calibration and which objective was used when the example was made.
 
 To set it, select the objective, run live and calibrate it as follows:
+
 ![Calibrate objective](images/Calibrate_live_1.png)
 
 Select manual method:

@@ -14,7 +14,8 @@ In the following examples we will use  the Number of cells or the Standard Error
 - [Hardware setup](#hardware-setup)
 - [Acquire a time-lapse until a given number of cells is reached](#acquire-a-time-lapse-until-a-given-number-of-cells-is-reached)
 - [Acquire a time-lapse until a given cell feature statistic is reached](#acquire-a-time-lapse-until-a-given-cell-feature-statistic-is-reached)
-- [Stop acquiring wells that reached a given Standard Error (SE))](#stop-acquiring-wells-that-reached-a-given-standard-error-se)
+- [Stop acquiring wells that reached a given Standard Error (SE)](#stop-acquiring-wells-that-reached-a-given-standard-error-se)
+- [Stop acquiring plate when the Z-factor reaches given value](#stop-acquiring-plate-when-the-z-factor-reaches-given-value)
 
 ## Hardware setup
 
@@ -176,7 +177,7 @@ It turns out there is such a formula:
 
 $\Large{n_T = n_l + n_c}$
 
-$\Large{\mu_T = \frac{n_l*\mu_l + n_c*\mu_c}{N}}$
+$\Large{\mu_T = \frac{n_l*\mu_l + n_c*\mu_c}{n_T}}$
 
 $\Large{\sigma_T = \frac{n_l*((\mu_l - \mu_T)^2 + \sigma_l) + n_c*((\mu_c - \mu_T)^2 + \sigma_c)}{n_T}}$
 
@@ -252,9 +253,8 @@ We have to keep track of the visited wells and stop (break from the time loop) w
 We reuse the GA3 recipe from the previous example without any change.
 
 In the JOB we have to make some changes though. 
-Lets start with the Variables task where we change all variables to arrays (of 96 elements) and add one more:
-- totalCounts, totalMeans, totalVars, SEs: all defined as array of 96 doubles.
-- wellsVisited: defined as double scalar value
+Lets start with the Variables task where we change all variables to arrays (of 96 elements):
+- totalCounts, totalMeans, and totalVars all defined as array of 96 doubles.
 
 ![JOB Variables](images/41-Variables.png)
 
@@ -262,15 +262,18 @@ Then we modify the rest of the JOB as follows:
 - Plate definition task goes below the Variables task,
 - insert the Well selection below it and select two wells only,
 - the Well loop task goes inside the time loop,
-- before the well loop (inside the time loop) add Expression task and set the variable wellsVisited to 0 in it
-- after the well loop add the If task and check the number of wellsVisited equals to zero and
 - in the If task insert the Break task.
 
 The Macro has to change a bit too:
 
-- All the `totalCounts[i]`, `totalMeans[i]`, `totalVars[i]` and `SEs[i]` must have an index (they are arrays),
+- All the `totalCounts[i]`, `totalMeans[i]` and `totalVars[i]` must have an index (they are arrays),
 - The index `int i = Job.Wells.Current` refers to current well.
-- Finally we update `wellsVisited` variable.
+- We calculate SE in the If and directly compare it with the given threshold.
+
+It the calculated SE is less then the threshold we will skip the current well:
+```c
+Job.Wells.CurrentWell.Skip = 1;
+```
 
 ```c
 int i = Job.Wells.Current;
@@ -278,11 +281,14 @@ int n = Job.CellCountMeanVar.Tables.Records.CellCount.First;
 double mean = Job.CellCountMeanVar.Tables.Records.MeanEqDia.First;
 double var = Job.CellCountMeanVar.Tables.Records.VarEqDia.First;
 UpdateMeanAndVariance(totalCounts + i, totalMeans + i, totalVars + i, n, mean, var);
+
 if (totalCounts[i] > 0)
 {
-    SEs[i] = sqrt(totalVars[i]/totalCounts[i]);
+   if ((sqrt(totalVars[i]/totalCounts[i])) < 0.1)
+   {
+      Job.Wells.CurrentWell.Skip = 1;
+   }
 }
-wellsVisited = wellsVisited + 1;
 ```
 
 > [!Note]
@@ -290,6 +296,14 @@ wellsVisited = wellsVisited + 1;
 > `UpdateMeanAndVariance(&totalCounts[i], &totalMeans[i], &totalVars[i], n, mean, var);` \
 > To make it work use the pointer syntax instead:\
 > `UpdateMeanAndVariance(totalCounts + i, totalMeans + i, totalVars + i, n, mean, var);`
+
+
+Finally we check if the well loop still has some valid wells (that is not being skipped).
+```c
+Job.Wells.ValidCount==0
+```
+
+If the valid count goes down to zeo we  break from the time loop.
 
 ![JOB](images/40-AcquireWellToGivenEqDiaSE_job.png)
 
@@ -311,3 +325,106 @@ The GA3 for checking the SE had to be slightly modified:
 ![GA3: recipe](images/47-GA3_CheckWellSE.png)
 
 The GA3 recipe to check the result: [CheckWellSE.ga3](CheckWellSE.ga3)
+
+
+## Stop acquiring plate when the Z-factor reaches given value
+
+Another variation of a stopping condition is accumulated plate [Z-factor](https://en.wikipedia.org/wiki/Z-factor). We capture plate over a time until we reach the given Z-factor.
+
+$Z' = 1 - \Large{\frac{3(\sigma_n + \sigma_p)}{\lvert\mu_n - \mu_p\rvert}}$ 
+
+We will calculate the z-factor for the acquired data so far. For this we will accumulate the means ($\mu$) and variances ($\sigma^2$) for the negative and positive labels supplied from the GA3 recipe.
+
+Let's define a well-plate with one half of the wells labeled "negative" and other half labeled "positive" like this:
+
+![Labeling task](images/52-WellplateLabeling_task.png)
+
+Make sure to acquire the wells from both labels (at least two):
+
+![Well Selection task](images/53-WellplateSelection_task.png)
+
+Acquire one well-plate with the following JOB:
+- the above labeling and well selection,
+- time loop with one repetition,
+- well loop over the selection,
+- move to center and
+- capture.
+
+![Well-plate JOBplate](images/50-AcquireWellplateFoZFactor_job.png)
+
+The job is [5-AcquireWellplateForZfactor.bin](5-AcquireWellplateForZfactor.bin)
+
+We will use the acquired image for making the GA3 recipe that will calculate the counts, means and variances for both positive and negative wells. We will use again Equivalent Diameter as in the example above.
+
+Until Accumulate the recipe is the same. We use the Wellplate metadata to extract well-plate metadata like Labeling. We will join the well metadata with accumulated object data using the well column. After Join we will split in two branches:
+- One will calculate Z-factor using the built-in node. Just to have a reference value.
+- Other will calculate the input values for the calculating Z-factor in JOBS.
+
+![GA3 recipe](images/54-GA3_recipe.png)
+
+![Join node](images/56-GA3_Join_node.png)
+
+![Z-factor node](images/55-GA3_ZFactor_node.png)
+
+In our case the $Z' = -28$ (a poor assay when Z' < 0). 
+
+> [!Note] 
+> This value will not improve with $N$ as we have constant data (therefore means and variances) repeating over.
+
+![Reduce node](images/57-GA3_Reduce_node.png)
+
+The Reduce node groups the records according to Control and calculates CountOfCells, MeanCellEqDiameter and VarOfCellEqDiameter per each group (negative and positive).
+
+![Sort node](images/58-GA3_Sort_node.png)
+
+We then sort the two rows alphabetically to make sure negative row is before positive.
+
+![Results](images/59-GA3_Results.png)
+
+The results show why the Z-factor was so poor: the means are very close together compared to their variances.
+
+The GA3 is in [PlateZfactor.ga3](PlateZfactor.ga3)
+
+We can now make the final JOB by adding tasks as follows:
+- Variables task at the beginning where we will accumulate `total_n`, `total_mean` and `total_var` for positive and negative,
+- GA3 task after the well loop as we need whole well-plate,
+- Macro task that will calculate Z-factor from provided data and
+- IF task that will exit when we reach Z_factor > 0.5.
+
+![JOB](images/60-AcquireWellplateToGivenZfactor_job.png)
+
+Since Z-factor doesn't care about positive negative order we create following variables:
+
+![Variables task](images/61-Variables_task.png)
+
+In the GA3 task we uncheck all under Images in the Save outputs tab and check CountOfCells, MeanCellEqDiameter and VarOfCellEqDiameter in the Export parameters tab.
+
+![GA3 task](images/63-GA3_task.png)
+
+Then in the macro task following macro calculates the Z-factor from the accumulated data.
+
+```c
+double n0 = Job.PlateZfactor.Tables.Records.CountOfCells[0];
+double n1 = Job.PlateZfactor.Tables.Records.CountOfCells[1];
+double mean0 = Job.PlateZfactor.Tables.Records.MeanCellEqDiameter[0];
+double mean1 = Job.PlateZfactor.Tables.Records.MeanCellEqDiameter[1];
+double var0 = Job.PlateZfactor.Tables.Records.VarOfCellEqDiameter[0];
+double var1 = Job.PlateZfactor.Tables.Records.VarOfCellEqDiameter[1];
+
+UpdateMeanAndVariance(&total_n0, &total_mean0, &total_var0, n0, mean0, var0);
+UpdateMeanAndVariance(&total_n1, &total_mean1, &total_var1, n1, mean1, var1);
+
+Z_factor = 1 - (3 * (sqrt(total_var0) + sqrt(total_var1)) /  fabs(total_mean0-total_mean1));
+```
+
+Question task can be used to monitor the changing of the Z-factor value.
+
+![Question task](images/64-Info_task.png)
+
+When the JOB is ran it will do all ten repetitions. The Z-factor will be the same all the time as the means and variances do not change.
+
+![JOB progress](images/65-Job_progress.png)
+
+Clearly, the example should be run on an living sample where there is a chance o Z-factor improvement.
+
+The final job is available in [6-AcquireWellplateToGivenZfactor.bin](6-AcquireWellplateToGivenZfactor.bin)
