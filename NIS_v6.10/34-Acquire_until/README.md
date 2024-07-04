@@ -623,6 +623,77 @@ In order to test the convergence we can fake the Z-factor calculation (on line 3
 Job.PythonScript.Current_Z_Factor = 1 - 3 * (1/(Job.TimeLapse.Current+1)) / abs(total_m[0] - total_m[1])
 ```
 
-Running the JOB will show the Z-factor Growing until it reaches the target 0.5.
+Running the JOB will show the Z-factor growing until it reaches the target $0.5$.
 
 We have shown that the JOB will finish when the Z-factor is not converging or when the target Z-factor is reached.
+
+#### 3. We can save the plot of the Z-factor convergence in a pdf file
+
+We can continue with the example and plot the Z-factors, target Z-factor and the trend line of the last three Z-factors.
+We save it into a pdf.
+
+```py
+import limjob
+import matplotlib.pyplot as plt
+from math import sqrt
+from scipy import stats
+from time import time
+
+# lists of length 2 (negative, positive)
+total_n = [ 0, 0 ]
+total_m = [ 0.0, 0.0 ]
+total_v = [ 0.0, 0.0 ]
+
+# for the trend line
+t0 = time()
+times = []
+Z_factors = []
+
+def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float, m: float, v: float) -> (float, float, float): 
+    N = last_n + n
+    M = (last_n * last_m + n * m) / N
+    V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
+    return N, M, V
+
+def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+    global total_n, total_m, total_v
+    # for easier reference
+    # all n, m, v are lists of length 2 (negative, positive)
+    n = Job.PlateZfactor.Tables.Records.CountOfCells
+    m = Job.PlateZfactor.Tables.Records.MeanCellEqDiameter
+    v = Job.PlateZfactor.Tables.Records.VarOfCellEqDiameter
+    # update the totals
+    for i in (0, 1):
+        total_n[i], total_m[i], total_v[i] = updateMeanAndVariance(total_n[i], total_m[i], total_v[i], n[i], m[i], v[i])
+    # calculate the Z-factor (set it into the the task parameter) and set Done to 1 to exit after first iteration
+    Job.PythonScript.Current_Z_Factor = 1 - 3 * (2 / (Job.TimeLapse.Current+1)) / abs(total_m[0] - total_m[1])
+    # if we already met our target we are done
+    if Job.PythonScript.Target_Z_Factor < Job.PythonScript.Current_Z_Factor:
+        Job.PythonScript.Done = 1
+    # append the data for the trend line
+    now = time() - t0
+    times.append(now)
+    Z_factors.append(Job.PythonScript.Current_Z_Factor)
+    print("Z_factors", Z_factors)
+    # initialize the remaining time to infinity
+    Job.PythonScript.Remaining_Time = float("inf")
+    # do the fit after we have three iterations
+    plt.clf()    
+    a_s, b_s = 0, 0
+    if 3 <= len(Z_factors):      
+        (a_s, b_s, r, tt, stderr) = stats.linregress(times[-3:], Z_factors[-3:])
+        # calculate the remaining time: T = (y - b_s) / a_s - now
+        Job.PythonScript.Remaining_Time = max(0, (Job.PythonScript.Target_Z_Factor - b_s) / a_s - now) if a_s > 0 else float("inf")
+        # if we are diverging (the slope is negative or zero) we are done too
+        if a_s <= 0:
+            Job.PythonScript.Done = 1
+    # matplotlib ploting
+    plt.title('Z-factor convergence')
+    plt.plot(times, Z_factors, 'k.')
+    plt.plot(times, [t*a_s + b_s for t in times], 'g')
+    plt.plot(times, [Job.PythonScript.Target_Z_Factor]*len(times), 'r')
+    plt.legend(['Z-factors', f'fit of last 3 values (a={a_s:.3f})', f'target Z-factor ({Job.PythonScript.Target_Z_Factor})'])
+    plt.savefig(Job.RunFolder + "Z_factors.pdf", dpi=150)
+```
+
+![Z-factor Convergence plot](images/76-Zfactor_Convergence_plot.png)
