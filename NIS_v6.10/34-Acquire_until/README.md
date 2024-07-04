@@ -16,6 +16,7 @@ In the following examples we will use  the Number of cells or the Standard Error
 - [Acquire a time-lapse until a given cell feature statistic is reached](#acquire-a-time-lapse-until-a-given-cell-feature-statistic-is-reached)
 - [Stop acquiring wells that reached a given Standard Error (SE)](#stop-acquiring-wells-that-reached-a-given-standard-error-se)
 - [Stop acquiring plate when the Z-factor reaches given value](#stop-acquiring-plate-when-the-z-factor-reaches-given-value)
+- [Stop acquiring plate when the Z-factor reaches given value using python script](#stop-acquiring-plate-when-the-z-factor-reaches-given-value-using-python-script)
 
 ## Hardware setup
 
@@ -177,21 +178,21 @@ It turns out there is such a formula:
 
 $\Large{n_T = n_l + n_c}$
 
-$\Large{\mu_T = \frac{n_l*\mu_l + n_c*\mu_c}{n_T}}$
+$\Large{\mu_T = \frac{n_l\mu_l + n_c\mu_c}{n_T}}$
 
-$\Large{\sigma_T = \frac{n_l*((\mu_l - \mu_T)^2 + \sigma_l) + n_c*((\mu_c - \mu_T)^2 + \sigma_c)}{n_T}}$
+$\Large{\sigma_T^2 = \frac{n_l(\mu_l - \mu_T)^2 + n_l\sigma_l^2 + n_c(\mu_c - \mu_T)^2 + n_c\sigma_c^2}{n_T}}$
 
 where:
 - $n_T$, $n_l$ and $n_c$ is total, last and current count
 - $\mu_T$, $\mu_l$ and $\mu_c$ is total, last and current mean
-- $\sigma_T$, $\sigma_l$ and $\sigma_c$ is total, last and current variance
+- $\sigma_T^2$, $\sigma_l^2$ and $\sigma_c^2$ is total, last and current variance
 
 We made a convenience macro function to perform this calculation:
 ```c
 int UpdateMeanAndVariance(int* totalN, double* totalMean, double* totalVar, int n, double mean, double* var);
 ```
 
-Now that we have figured out the statistics, we will reuse the GA3 from the previous example and slightly update it. We need to output three statistics: CellCount (the $n_c$), MeanEqDia (the $\mu_c$) and VarEqDia (the $\sigma_c$). Actually only two, because CellCount we already have. As these statistics are all per frame, we will just add two new columns in the same ObjectCount node:
+Now that we have figured out the statistics, we will reuse the GA3 from the previous example and slightly update it. We need to output three statistics: CellCount (the $n_c$), MeanEqDia (the $\mu_c$) and VarEqDia (the $\sigma_c^2$). Actually only two, because CellCount we already have. As these statistics are all per frame, we will just add two new columns in the same ObjectCount node:
 
 ![GA3 recipe: object count node](images/33-GA3_ObjectCount.png)
 
@@ -421,10 +422,207 @@ Question task can be used to monitor the changing of the Z-factor value.
 
 ![Question task](images/64-Info_task.png)
 
-When the JOB is ran it will do all ten repetitions. The Z-factor will be the same all the time as the means and variances do not change.
+> [!NOTE]
+The Z-factor may not converge and consequently the JOB may run forever. As a matter of fact this is the case in our example. We must use the "Finish" button to stop it. In [the next section](#stop-acquiring-plate-when-the-z-factor-reaches-given-value-using-python-script) we will try to fix it.
 
 ![JOB progress](images/65-Job_progress.png)
 
-Clearly, the example should be run on an living sample where there is a chance o Z-factor improvement.
-
 The final job is available in [6-AcquireWellplateToGivenZfactor.bin](6-AcquireWellplateToGivenZfactor.bin)
+
+## Stop acquiring plate when the Z-factor reaches given value using python script
+
+This example builds upon the previous section showing how to monitor the Z-factor value and stop when a target is met or when it is not converging. We will the Python script task instead of of the Macro task.
+
+Goals:
+1. Calculate the Z-factor while internalizing all temporary variables.
+2. Output general Done value when the requested Z-factor is reached or when it is diverging.
+3. Give some hint about when the target will be reached.
+
+### About Python Script task from the help
+The Python script task enables users to write scripts in Python language in places where the one-line Expression task doesn't provide enough room for a more sophisticated code (see NIS Elements help for more details).
+
+The Python code **must**:
+- import *limjob* and
+- define a *run* function (with this exact signature) at the module level.
+
+```py
+import limjob
+
+def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+    pass
+```
+
+Features of teh task:
+- The task will call the `run(...)` function on every execution of the task (e.g. in loop).
+- User can define parameters of the task that are accessible to other tasks in the job and to itself during run. The parameters are initialized to specified values before the job is executed.
+- All the Job task parameters are accessible (as in the Expression and Macro task) with following syntax:\
+`Job.<task_name>.<parameter_name>.<...>`
+- All the macro global variables are accessible with the following syntax: \
+`macro.<variable_name>`
+- The python script module and its global dictionary lives during the whole job run (across all the run(...) calls).
+Therefore, it is possible to define global variables at the module level and use them store state between individual executions.
+
+
+### Modifying the above example
+
+We modify the JOB by:
+- removing the Variables task,
+- replacing the Macro task with Python script and
+- changing the condition in the last
+
+#### 1. Reproduce the example above with Python
+
+![The JOB](images/70-AcquireWellplateToGivenZfactorPython_job.png)
+
+Lets add the Parameters in the Python task. The names must meet requirements of Python identifiers:
+
+| Name             | Type   | Initial value |
+| ---------------- | ------ | -------------:|
+| Target_Z_Factor  | double | 0.5           |
+| Current_Z_Factor | double | 0.5           |
+| Remaining_Time   | double | 0.5           |
+| Done             | int    | 0             |
+
+Should look like this:
+
+![The Python task](images/72-Parameters_in_Python_task.png)
+
+Rewrite the code from c-like macro to Python. These are the major steps:
+- Define the temp variables (total_n, total_m, total_v) at the module level. We will make a two-item list for positive and negative label.
+- Define the `updateMeanAndVariance(...)` function based on the above formulae that we used to accumulate means and variances.
+- Implement the `run(...)` function.
+
+```py
+import limjob
+from math import sqrt
+
+# lists of length 2 (negative, positive)
+total_n = [ 0, 0 ]
+total_m = [ 0.0, 0.0 ]
+total_v = [ 0.0, 0.0 ]
+
+def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float, m: float, v: float) -> (float, float, float): 
+    N = last_n + n
+    M = (last_n * last_m + n * m) / N
+    V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
+    return N, M, V
+
+def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+    global total_n, total_m, total_v
+    # for easier reference
+    # all n, m, v are lists of length 2 (negative, positive)
+    n = Job.PlateZfactor.Tables.Records.CountOfCells
+    m = Job.PlateZfactor.Tables.Records.MeanCellEqDiameter
+    v = Job.PlateZfactor.Tables.Records.VarOfCellEqDiameter
+    # update the totals
+    for i in (0, 1):
+        total_n[i], total_m[i], total_v[i] = updateMeanAndVariance(total_n[i], total_m[i], total_v[i], n[i], m[i], v[i])
+    # calculate the Z-factor (set it into the the task parameter) and set Done to 1 to exit after first iteration
+    Job.PythonScript.Current_Z_Factor = 1 - 3 * (sqrt(total_v[0]) + sqrt(total_v[1])) / abs(total_m[0] - total_m[1])
+    Job.PythonScript.Done = 1
+```
+
+> [!NOTE]
+> Do not forget to click Apply whenever you make changes.
+
+Setup the Question task to show the parameters we calculate in the Python task by inserting the following text:
+
+```txt
+Target Z-factor: Job.PythonScript.Target_Z_Factor
+Current Z-factor: Job.PythonScript.Current_Z_Factor
+Remaining time: Job.PythonScript.Remaining_Time s
+```
+Initially we set the question to Stop and "Wait for user action".
+
+![Question task](images/73-Question_task.png)
+
+Finally the IF task will check the Done parameter
+
+![IF task](images/74-If_task.png)
+
+When we run it the JOB should stop after first iteration show the variables. Especially the Current_Z_Factor = $-28$. After we click Continue the job should finish.
+
+So far we managed to hide the temporary variables and to calculate the Z-factor.
+
+#### 2. Evaluate the Z-factor and see if it is converging
+
+As the Z-factor values are from $[-\infty; 1]$. We want to see the Current_Z_Factor growing over time.
+For this we will:
+- accumulate first three iterations (arbitrary decision),
+- calculate the linear regression using scipy module and
+- evaluate the slope of the fitted line.
+
+For the regression we followed [this example](https://scipy-cookbook.readthedocs.io/items/LinearRegression.html).
+
+```py
+import limjob
+from math import sqrt
+from scipy import stats
+from time import time
+
+# lists of length 2 (negative, positive)
+total_n = [ 0, 0 ]
+total_m = [ 0.0, 0.0 ]
+total_v = [ 0.0, 0.0 ]
+
+# for the trend line
+t0 = time()
+times = []
+Z_factors = []
+
+def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float, m: float, v: float) -> (float, float, float): 
+    N = last_n + n
+    M = (last_n * last_m + n * m) / N
+    V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
+    return N, M, V
+
+def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+    global total_n, total_m, total_v
+    # for easier reference
+    # all n, m, v are lists of length 2 (negative, positive)
+    n = Job.PlateZfactor.Tables.Records.CountOfCells
+    m = Job.PlateZfactor.Tables.Records.MeanCellEqDiameter
+    v = Job.PlateZfactor.Tables.Records.VarOfCellEqDiameter
+    # update the totals
+    for i in (0, 1):
+        total_n[i], total_m[i], total_v[i] = updateMeanAndVariance(total_n[i], total_m[i], total_v[i], n[i], m[i], v[i])
+    # calculate the Z-factor (set it into the the task parameter) and set Done to 1 to exit after first iteration
+    Job.PythonScript.Current_Z_Factor = 1 - 3 * (sqrt(total_v[0]) + sqrt(total_v[1])) / abs(total_m[0] - total_m[1])
+    # if we already met our target we are done
+    if Job.PythonScript.Target_Z_Factor < Job.PythonScript.Current_Z_Factor:
+        Job.PythonScript.Done = 1
+    # append the data for the trend line
+    now = time() - t0
+    times.append(now)
+    Z_factors.append(Job.PythonScript.Current_Z_Factor)
+    # initialize the remaining time to infinity
+    Job.PythonScript.Remaining_Time = float("inf")
+    # do the fit after we have three iterations
+    if 3 <= len(Z_factors):      
+        (a_s, b_s, r, tt, stderr) = stats.linregress(times[-3:], Z_factors[-3:])
+        # calculate the remaining time: T = (y - b_s) / a_s - now
+        Job.PythonScript.Remaining_Time = max(0, (Job.PythonScript.Target_Z_Factor - b_s) / a_s - now) if a_s > 0 else float("inf")
+        # if we are diverging (the slope is negative or zero) we are done too
+        if a_s <= 0:
+            Job.PythonScript.Done = 1
+
+```
+
+If we run the JOB it should end after three clicks to Continue because the Z-factor is always the same and consequently the slope of the fitted line is zero.
+
+We should remove the Wait from the Question and the continue button as well to make the JOB usable.
+
+![Question task](images/75-Question_nowait_task.png)
+
+When we runt we should see the Z-factor $-28$ not changing the JOB should finish after three iterations of the time loop. We can consider the exercise done.
+
+The final Job is [7-AcquireWellplateToGivenZfactorPython.bin](7-AcquireWellplateToGivenZfactorPython.bin)
+
+In order to test the convergence we can fake the Z-factor calculation (on line 33) as follows:
+```py
+Job.PythonScript.Current_Z_Factor = 1 - 3 * (1/(Job.TimeLapse.Current+1)) / abs(total_m[0] - total_m[1])
+```
+
+Running the JOB will show the Z-factor Growing until it reaches the target 0.5.
+
+We have shown that the JOB will finish when the Z-factor is not converging or when the target Z-factor is reached.
