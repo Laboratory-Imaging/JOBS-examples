@@ -8,6 +8,7 @@ Here we will assume a special case where we have a sample that has two peaks in 
 > This example is shown on simulated devices - it doesn't require any real hardware for trying it out.
 
 ## Contents
+
 - [Hardware setup](#hardware-setup)
 - [Calculate custom focus plane and move to it](#calculate-custom-focus-plane-and-move-to-it)
 - [Perform AF in each well and then run imaging](#perform-af-in-each-well-and-then-run-imaging)
@@ -22,9 +23,9 @@ For camera simulator we will use an artificial two-foci z-stack:
 
 [fluo-agnor-two-foci-zstack.nd2](fluo-agnor-two-foci-zstack.nd2)
 
-Open it in NIS Elements and set it into the camera simulator by clicking on "Load current ND" in the Camera Simulator settings. 
+Open it in NIS Elements and set it into the camera simulator by clicking on "Load current ND" in the Camera Simulator settings.
 
-![Two foci z-stack](images/01-two-foci-zstack.png)
+![Two foci z-stack](images/01-two-foci-zstack.gif)
 
 Then, setup the rest of the acquisition settings:
 
@@ -42,10 +43,10 @@ Then, setup the rest of the acquisition settings:
 
 ## Calculate custom focus plane and move to it
 
-This example wil show how to use 
+This example wil show how to use
+
 - GA3 to find a Z-position and
 - use it in JOBS.
-
 
 ### 1. Run a Z-stack
 
@@ -65,6 +66,7 @@ Run the job and open the z-stack.
 Create a new GA3 recipe (menu: Image -> New GA3 recipe...).
 
 First we will calculate the criteria for every z-slice and plot them to see what the sample looks like. Let's add two nodes:
+
 - Focus criteria (in 3D) to calculate the focus and
 - Scatterplot to plot the focus criterion in every plane.
 
@@ -72,6 +74,7 @@ First we will calculate the criteria for every z-slice and plot them to see what
 ![GA3 Focus criteria node](images/06-FocusCriteria_node.png)
 
 In the scatterplot dialog select the data on axes as follows:
+
 - "Whole frame criteria" column on X axis,
 - Z coord column on Y axis,
 - set "line" to "solid" in the series style for the Z coord and
@@ -98,7 +101,8 @@ The GA3 recipe: [CustomFocus.ga3](CustomFocus.ga3)
 ### 4. Move to custom focus plane in the JOB
 
 In the JOB we add:
-- GA3 task to run the recipe and calculate the focus plane,
+
+- GA3 task to run the recipe and calculate the focus plane
 - Expression task to move the current Z position to the calculated position and
 - Capture task to capture the image at the calculated focus position.
 
@@ -120,18 +124,18 @@ Devices.Z = Job.CustomFocus.Tables.Records.MeanZcoord.First
 
 ![Custom AF Job](images/15-AcquireZStackForAF_job.png)
 
-When we run the job we can check if the last frame is acquired at the correct Z. In this example it should be at Z = 500 µm. In fact it is at 499.99 µm which we consider to be correct. 
+When we run the job we can check if the last frame is acquired at the correct Z. In this example it should be at Z = 500 µm. In fact it is at 499.99 µm which we consider to be correct.
 
 ![Z coordinates](images/16-AcquireZStackForAF_outcome.png)
 
 The final JOB is [1-AcquireZStackForAF.bin](1-AcquireZStackForAF.bin).
-
 
 ## Perform AF in each well and then run imaging
 
 Here, we extend the previous example by doing everything on a well-plate. We first find the custom focus in each well, we save it into the well Z position and then we run a time-lapse over all wells which use it.
 
 Everything stays as it is except:
+
 - the expression, where instead of moving with the Z device directly we set the Z position of the Well (Current well in the loops task).
 
 ```c

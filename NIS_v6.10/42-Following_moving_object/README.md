@@ -9,9 +9,9 @@ This example is shown on simulated devices - it doesn't require any real hardwar
 
 - [Hardware setup](#hardware-setup)
 - [Simple acquisition JOB](#simple-acquisition-job)
-- [Simple JOB that follows the object (absolute)](#simple-job-that-follows-the-object-absolute)
-- [Improved JOB that follows the object (relative)](#improved-job-that-follows-the-object-relative)
-- [Extended JOB that follows the object in wells](#extended-job-that-follows-the-object-in-wells)
+- [Simple JOB that follows an object (absolute)](#simple-job-that-follows-an-object-absolute)
+- [Improved JOB that follows an object (relative)](#improved-job-that-follows-an-object-relative)
+- [Extended JOB that follows an object in wells](#extended-job-that-follows-an-object-in-wells)
 
 ## Hardware setup
 
@@ -22,9 +22,9 @@ This example is shown on simulated devices - it doesn't require any real hardwar
 For the camera simulator we will use an artificial time-lapse:
 [bouncing_ball.nd2](bouncing_ball.nd2)
 
-This is the maximum intensity projection of the bouncing ball: a ball moves from right to left with a bouncing effect.
+This is the animation of the bouncing ball: a ball moves from right to left with a bouncing effect.
 
-![sample movie: bouncing_ball.nd2](images/02-sample_movie_maxip.png)
+![sample movie: bouncing_ball.nd2](images/02-sample_movie.gif)
 
 Set the movie into the camera simulator (click on "Load current ND").
 
@@ -40,24 +40,26 @@ Set the movie into the camera simulator (click on "Load current ND").
 Let's create a simple time-lapse acquisition JOB (menu: HCA/JOBS -> Create New JOB...)
 
 With following tasks:
+
 - Time loop task: set the Total Duration to "Number of Loops" and 96 (the length of the bouncing ball movie),
 - Capture task.
 
 ![Acquire bouncing ball job](images/11-AcquireBouncingBall_job.png)
 
 > [!NOTE]
-> Remember 
+> Remember
+>
 > - to click the "Reset Frame Position" button before running experiments.
 > - to set the stage position roughly in the middle of the scan area.
 
-Run it, check the preview and in the results go to the Grid view and enable Statistics. 
+Run it, check the preview and in the results go to the Grid view and enable Statistics.
 After scrolling to the right you can see from the X and Y stage coordinates (and statistics) that the stage is not moving.
 
 ![Results: Acquired bouncing ball](images/12-AcquireBouncingBall_results.png)
 
 The final JOB: [0-AcquireBouncingBall.bin](0-AcquireBouncingBall.bin)
 
-## Simple JOB that follows the object (absolute)
+## Simple JOB that follows an object (absolute)
 
 ### 1. Create a GA3 recipe
 
@@ -71,7 +73,7 @@ In the GA3 recipe (menu: Image -> New GA3 recipe...) use following nodes:
 
 We save everything (by connecting the nodes to save nodes): original image, detected binary object (for validation) and the object coordinates.
 
-We connected BrightSpots node to "Fluo" (meaning all fluorescence channels) because we want to be very generic about the inputs. 
+We connected BrightSpots node to "Fluo" (meaning all fluorescence channels) because we want to be very generic about the inputs.
 BrightSpots node makes average intensity if the channel has more components. For different modality (e.g. brightfield) the threshold may be more appropriate.
 
 ![GA3 recipe: largest object coordinates](images/14-ga3_bouncing_ball_graph.png)
@@ -95,6 +97,7 @@ Final GA3 recipe: [FollowBouncingBall.ga3](FollowBouncingBall.ga3)
 Open the previous JOB and save it under a different name in order to preserve the original JOB.
 
 We will add three new tasks:
+
 - GA3 task: to run the recipe after each acquired frame,
 - Expression (ExpressionX): to move the stage in X and
 - Expression (ExpressionY): to move the stage in Y.
@@ -114,11 +117,13 @@ We will add three new tasks:
 After inserting the task rename it to "ExpressionX".
 
 Then use the GUI as calculator:
+
 - Select the X (X Coord) under Devices and click insert. It will add it into the expression below.
-- Click the equal (=) symbol button. 
+- Click the equal (=) symbol button.
 - Select the First in the tree as shown and click insert. The expression should be complete as shown.
 
 or paste the following expression:
+
 ```c
 Devices.X=Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsX.First
 ```
@@ -127,6 +132,7 @@ The expression says:
 > Assign the value "Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsX.First" into "Devices.X"
 
 To further break it:
+
 - `Job.FollowBouncingBall` part represents the GA3 task,
 - `Tables.Records.ObjectCenterAbsX` part is the column (an Array of numbers) we exported from the GA3 task,
 - `First` part says that we want the first value of the column (or Array) and
@@ -137,7 +143,8 @@ To further break it:
 #### The ExpressionY task
 
 Do exactly the same but replace the X with Y:
-- rename the task to ExpressionY and 
+
+- rename the task to ExpressionY and
 - paste the following expression where we replaced X with Y (in Devices.**Y** and ObjectCenterAbs**Y**).
 
 ```c
@@ -149,7 +156,7 @@ The final JOB should look like this:
 ![Follow bouncing ball absolute job](images/25-FollowBouncingBallAbs_job.png)
 
 Display the XYZ Overview and run the JOB.
-In the progress widow observe the preview for the correct detection and in the XYZ Overview for the stage movement. 
+In the progress widow observe the preview for the correct detection and in the XYZ Overview for the stage movement.
 
 ![Follow bouncing ball absolute progress](images/26-FollowBouncingBallAbs_progress.png)
 
@@ -159,27 +166,29 @@ Finally, verify that the X and Y stage coordinates are changing.
 
 > [!IMPORTANT]
 > Because we are running everything on simulators and hence there is no real stage movement affecting the image being captured the coordinates are **wrong**!
-> However, if the same JOB and GA3 is run on real hardware with a moving object all will be fine. The images will show the object always in the middle of the frame (or near) 
+> However, if the same JOB and GA3 is run on real hardware with a moving object all will be fine. The images will show the object always in the middle of the frame (or near)
 > and the frame coordinates will show the stage movement as they try to correct for the object motion.
 > With simulators we can just observe that the stage is moving. Later we will show that the movement is correct.
 
 The final JOB : [1-FollowBouncingBallAbs.bin](1-FollowBouncingBallAbs.bin)
 
-## Improved JOB that follows the object (relative)
+## Improved JOB that follows an object (relative)
 
-The previous JOB tracks the object in such a way (absolute) that it moves the object into the center of the frame. Actually it moves with the stage so that the coordinate is in the center of the frame. 
-This may result in a jump after the first frame if the object was not in the middle of the frame at the beginning. 
+The previous JOB tracks the object in such a way (absolute) that it moves the object into the center of the frame. Actually it moves with the stage so that the coordinate is in the center of the frame.
+This may result in a jump after the first frame if the object was not in the middle of the frame at the beginning.
 However, in most practical scenarios this shouldn't be the case as operators will naturally move the object of interest to the center of the frame.
 
 In the following text we will show how to move relatively from the previous position. In order to do it we will introduce two new tasks into the JOB:
+
 - Variables: to store the position of the object in the previous frame and
 - Macro: where we will calculate the relative movement of the stage and do the move.
 
 The GA3 recipe remains the same.
 
-#### Variables task
+### Variables task
 
 Lets add three variables into the task:
+
 - prevX: of type double for previous object X position
 - prevY: of type double for previous object Y position
 - prevValid: of type int to indicate if the prevX and prevY are valid (0 or 1)
@@ -188,7 +197,7 @@ Check "Always initiate" and set the initial value to zero (0) for all variables.
 
 ![Variables task](images/31-FollowBouncingBallRel_Variables.png)
 
-#### Macro task
+### Macro task
 
 In the Macro task, paste the following code:
 
@@ -211,12 +220,12 @@ prevValid = 1;
 ```
 
 Let's break it down:
+
 1. Declare two variables deltaX and deltaY and set them to zero (0).
-2. If we have a previous position (prevValid is not zero), everything between the '{' and '}' (called a *block*) will be executed. Otherwise (prevValid *is* zero) the whole block will be skipped. 
-Inside the block we calculate the relative movement (deltaX and deltaY). Then we move the stage *by* deltaX and deltaY. 
+2. If we have a previous position (prevValid is not zero), everything between the '{' and '}' (called a *block*) will be executed. Otherwise (prevValid *is* zero) the whole block will be skipped.
+Inside the block we calculate the relative movement (deltaX and deltaY). Then we move the stage *by* deltaX and deltaY.
 We move *by* literally by taking the current position (Devices.X and Devices.Y), adding the relative movement (deltaX and deltaY) to it and setting it back as the current position to (Devices.X and Devices.Y).
 3. We save the the object position to prevX and prevY and set prevValid to 1.
-
 
 ![Follow bouncing ball relative job](images/33-FollowBouncingBallRel_job.png)
 
@@ -226,7 +235,7 @@ The final JOB : [2-FollowBouncingBallRel.bin](2-FollowBouncingBallRel.bin)
 
 > [!IMPORTANT]
 > Because we are running everything on simulators and hence there is no real stage movement affecting the image being captured the coordinates are **wrong**!
-> However, if the same JOB and GA3 is run on real hardware with a moving object all will be fine. The images will show the object always in the middle of the frame (or near) 
+> However, if the same JOB and GA3 is run on real hardware with a moving object all will be fine. The images will show the object always in the middle of the frame (or near)
 > and the frame coordinates will show the stage movement as they try to correct for the object motion.
 > With simulators we can just observe that the stage is moving.
 
@@ -251,13 +260,14 @@ Versus the uncorrected X, Y coordinates where the object motion is compensated t
 
 ![Uncorrected stage coordinates](images/35-FollowBouncingBallRel_positions.png)
 
-## Extended JOB that follows the object in wells
+## Extended JOB that follows an object in wells
 
 ### absolute
 
 For absolute version of the JOB we have to add two tasks relevant to the well-plate, a well loop and to slightly modify the expressions.
 
 Specifically:
+
 - We add plate definition at the beginning and select a plate (e.g. 96-well plate).
 - After the plate definition task we add a well selection and select only two wells.
 - Change the Total duration number of loops in the Time loop to 48 (because we have 96 frames in the ND2 file in the camera simulator).
@@ -266,16 +276,18 @@ Specifically:
 - We modify the expression in ExpressionX and ExpressionY as follows:
 
 ExpressionX:
+
 ```c
 Job.Wells.CurrentWell.Position.Stage.x=Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsX.First
 ```
 
 ExpressionY:
+
 ```c
 Job.Wells.CurrentWell.Position.Stage.y=Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsY.First
 ```
 
-Instead of moving the stage directly, we store the new position within the well. 
+Instead of moving the stage directly, we store the new position within the well.
 The stage will move to the new position during the Move to center task next time it goes around.
 
 ![Follow bouncing ball in wells absolute job](images/41-FollowBouncingBallInWellsAbs_job.png)
@@ -284,7 +296,7 @@ The final JOB : [4-FollowBouncingBallInWellsAbs.bin](4-FollowBouncingBallInWells
 
 ### relative
 
-For relative version of the JOB we must create and store the prevX, prevY and prevValid variables for each well. 
+For relative version of the JOB we must create and store the prevX, prevY and prevValid variables for each well.
 As we have at maximum 96 wells (in this example) we will create arrays of size 96 for all variables called lastX, lastY and lastValid.
 We will initialize the variables as shown below.
 
@@ -296,10 +308,12 @@ Insert the Variables task at the beginning of the JOB and define lastX, lastY an
 ![Variables task](images/51-FollowBouncingBallInWellRel_Variables.png)
 
 In the macro, replace:
+
 - the prevX, prevY and prevValid with lastX[wellIndex], lastY[wellIndex] and lastValid[wellIndex] respectively and
 - Devices.X and Devices.X with Job.Wells.CurrentWell.Position.Stage.x and Job.Wells.CurrentWell.Position.Stage.y
 
 Here is how it should look like:
+
 ```c
 double deltaX = 0.0;
 double deltaY = 0.0;
@@ -327,7 +341,7 @@ The final JOB : [5-FollowBouncingBallInWellsRel.bin](5-FollowBouncingBallInWells
 
 > [!IMPORTANT]
 > Because we are running everything on simulators and hence there is no real stage movement affecting the image being captured the coordinates are **wrong**!
-> However, if the same JOB and GA3 is run on real hardware with a moving object all will be fine. The images will show the object always in the middle of the frame (or near) 
+> However, if the same JOB and GA3 is run on real hardware with a moving object all will be fine. The images will show the object always in the middle of the frame (or near)
 > and the frame coordinates will show the stage movement as they try to correct for the object motion.
 > With simulators we can just observe that the stage is moving.
 
@@ -351,4 +365,3 @@ After the fix, the corrected X, Y stage coordinates are reflecting only tho obje
 Versus the uncorrected X, Y coordinates, where the object motion is compensated twice and accumulated until it hits stage limit!
 
 ![Uncorrected stage coordinates right](images/55-FollowBouncingBallInWellsRel_positions.png)
-
