@@ -20,7 +20,8 @@ This example is shown on simulated devices - it doesn't require any real hardwar
 ### Camera File simulator setup
 
 For the camera simulator we will use an artificial time-lapse:
-[bouncing_ball.nd2](bouncing_ball.nd2)
+
+Source ND2 file: [[View on GitHub](bouncing_ball.nd2)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/bouncing_ball.nd2)]
 
 This is the animation of the bouncing ball: a ball moves from right to left with a bouncing effect.
 
@@ -57,7 +58,7 @@ After scrolling to the right you can see from the X and Y stage coordinates (and
 
 ![Results: Acquired bouncing ball](images/12-AcquireBouncingBall_results.png)
 
-The final JOB: [0-AcquireBouncingBall.bin](0-AcquireBouncingBall.bin)
+Final JOB file: [[View on GitHub](0-AcquireBouncingBall.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/0-AcquireBouncingBall.bin)]
 
 ## Simple JOB that follows an object (absolute)
 
@@ -90,7 +91,7 @@ This should be the resulting table:
 
 ![GA# recipe results](images/17-ga3_bouncing_ball_meas_results.png)
 
-Final GA3 recipe: [FollowBouncingBall.ga3](FollowBouncingBall.ga3)
+The final GA3 recipe: [[View on GitHub](FollowBouncingBall.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/FollowBouncingBall.ga3)]
 
 ### 2. Use the GA3 recipe in JOBS
 
@@ -170,7 +171,7 @@ Finally, verify that the X and Y stage coordinates are changing.
 > and the frame coordinates will show the stage movement as they try to correct for the object motion.
 > With simulators we can just observe that the stage is moving. Later we will show that the movement is correct.
 
-The final JOB : [1-FollowBouncingBallAbs.bin](1-FollowBouncingBallAbs.bin)
+Final JOB file: [[View on GitHub](1-FollowBouncingBallAbs.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/1-FollowBouncingBallAbs.bin)]
 
 ## Improved JOB that follows an object (relative)
 
@@ -231,7 +232,7 @@ We move *by* literally by taking the current position (Devices.X and Devices.Y),
 
 If we run the JOB everything should look like with the previous one except that the stage may hit its limits (see then important box below).
 
-The final JOB : [2-FollowBouncingBallRel.bin](2-FollowBouncingBallRel.bin)
+Final JOB file: [[View on GitHub](2-FollowBouncingBallRel.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/2-FollowBouncingBallRel.bin)]
 
 > [!IMPORTANT]
 > Because we are running everything on simulators and hence there is no real stage movement affecting the image being captured the coordinates are **wrong**!
@@ -247,7 +248,7 @@ prevX = Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsX.First + deltaX;
 prevY = Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsY.First + deltaY;
 ```
 
-The JOB with corrected coordinates for the simulator: [3-FollowBouncingBallRelCorrectedForSimulator.bin](3-FollowBouncingBallRelCorrectedForSimulator.bin)
+JOB file with corrected coordinates for the simulator: [[View on GitHub](3-FollowBouncingBallRelCorrectedForSimulator.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/3-FollowBouncingBallRelCorrectedForSimulator.bin)]
 
 | :exclamation: Remember to *remove* the "+ deltaX" and  "+ deltaY" when using real hardware |
 | ------------------------------------------------------------------------------------------ |
@@ -292,7 +293,7 @@ The stage will move to the new position during the Move to center task next time
 
 ![Follow bouncing ball in wells absolute job](images/41-FollowBouncingBallInWellsAbs_job.png)
 
-The final JOB : [4-FollowBouncingBallInWellsAbs.bin](4-FollowBouncingBallInWellsAbs.bin)
+Final JOB file: [[View on GitHub](4-FollowBouncingBallInWellsAbs.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/4-FollowBouncingBallInWellsAbs.bin)]
 
 ### relative
 
@@ -337,7 +338,7 @@ And the whole JOB:
 
 ![Follow bouncing ball in wells relative job](images/52-FollowBouncingBallInWellsRel_job.png)
 
-The final JOB : [5-FollowBouncingBallInWellsRel.bin](5-FollowBouncingBallInWellsRel.bin)
+Final JOB file: [[View on GitHub](5-FollowBouncingBallInWellsRel.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/5-FollowBouncingBallInWellsRel.bin)]
 
 > [!IMPORTANT]
 > Because we are running everything on simulators and hence there is no real stage movement affecting the image being captured the coordinates are **wrong**!
@@ -353,7 +354,7 @@ lastX[wellIndex] = Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsX.First 
 lastY[wellIndex] = Job.FollowBouncingBall.Tables.Records.ObjectCenterAbsY.First + deltaY;
 ```
 
-The JOB with corrected coordinates for simulator: [6-FollowBouncingBallInWellsRelCorrectedForSimulator.bin](6-FollowBouncingBallInWellsRelCorrectedForSimulator.bin)
+JOB file with corrected coordinates for the simulator: [[View on GitHub](6-FollowBouncingBallInWellsRelCorrectedForSimulator.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/42-Following_moving_object/6-FollowBouncingBallInWellsRelCorrectedForSimulator.bin)]
 
 | :exclamation: Remember to *remove* the "+ deltaX" and  "+ deltaY" when using real hardware |
 | ------------------------------------------------------------------------------------------ |

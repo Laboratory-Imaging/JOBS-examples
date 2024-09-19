@@ -28,7 +28,7 @@ In the following examples we will use  the Number of cells or the Standard Error
 
 For camera simulator we will use an artificial two-frame time-lapse. The second frame is darker version of the first frame.
 
-[synthetic-objects-timelapse.nd2](synthetic-objects-timelapse.nd2)
+Source ND2 file: [[View on GitHub](synthetic-objects-timelapse.nd2)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/synthetic-objects-timelapse.nd2)]
 
 ![sample movie: synthetic-objects-timelapse.nd2](images/01-synthetic-timelapse.png)
 
@@ -67,7 +67,7 @@ Save the JOB and run it. Finish it manually (remember it has infinite duration),
 
 ![Acquired time-lapse](images/12-AcquireCells_image.png)
 
-Final JOB: [0-AcquireCells.bin](0-AcquireCells.bin)
+Final JOB file: [[View on GitHub](0-AcquireCells.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/0-AcquireCells.bin)]
 
 ### 1. Create a GA3 recipe that counts the number of cells in an image
 
@@ -87,7 +87,7 @@ Now set the node parameters like in the screenshot:
 
 ![GA3 recipe - Parameters](images/05-ga3_node_settings.png)
 
-The final GA3 recipe: [CellCount.ga3](CellCount.ga3)
+The final GA3 recipe: [[View on GitHub](CellCount.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/CellCount.ga3)]
 
 The resulting Records:
 
@@ -96,8 +96,6 @@ The resulting Records:
 ![GA3 results](images/07-Records_2.png)
 
 We can see that one frame has 54 and the second has 48 cells.
-
-Final GA3 recipe: [CellCount.ga3](CellCount.ga3)
 
 ### 2. Create the JOB that will stop after it acquires 1000 cells
 
@@ -166,7 +164,7 @@ We expect the JOB to acquire 20 frames as one frame has around 50 cells. Let's t
 
 ![JOB: results](images/26-Job_results.png)
 
-Final JOB: [1-Acquire1kCells.bin](1-Acquire1kCells.bin)
+Final JOB file: [[View on GitHub](1-Acquire1kCells.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/1-Acquire1kCells.bin)]
 
 ## Acquire a time-lapse until a given cell feature statistic is reached
 
@@ -207,7 +205,7 @@ Now that we have figured out the statistics, we will reuse the GA3 from the prev
 
 ![GA3 recipe: object count node](images/33-GA3_ObjectCount.png)
 
-The final GA3 recipe: [CellCountMeanVar.ga3](CellCountMeanVar.ga3)
+The final GA3 recipe: [[View on GitHub](CellCountMeanVar.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/CellCountMeanVar.ga3)]
 
 In the JOB we will "accumulate" not only the totalCellCount but the totalMean and totalVariance too. As we saw earlier the formulae are quite complex and we have the convenience function that will do it all. Then, we have to:
 
@@ -242,7 +240,7 @@ We want the experiment to stop when the SE drops below 0.1.
 
 ![JOB](images/32-if_task.png)
 
-Final JOB: [2-AcquireToGivenEqDiaSE.bin](2-AcquireToGivenEqDiaSE.bin)
+Final JOB file: [[View on GitHub](2-AcquireToGivenEqDiaSE.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/2-AcquireToGivenEqDiaSE.bin)]
 
 When we run the JOB we see it has 8 frames and that it needed 408 objects to get the SE to 0.099.
 
@@ -256,7 +254,7 @@ The GA3 for calculating the SE of all Object EqDiameter is straightforward:
 
 ![GA3: recipe](images/37-GA3_CheckSE.png)
 
-The GA3 recipe to check the result: [CheckSE.ga3](CheckSE.ga3)
+The GA3 recipe to check the result: [[View on GitHub](CheckSE.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/CheckSE.ga3)]
 
 ## Stop acquiring wells that reached a given Standard Error (SE)
 
@@ -329,7 +327,7 @@ After we run the example we get the results and can check the SE per well:
 
 ![JOB results](images/45-Job_results.png)
 
-Final JOB: [3-AcquireWellToGivenEqDiaSE.](3-AcquireWellToGivenEqDiaSE.bin)
+Final JOB file: [[View on GitHub](3-AcquireWellToGivenEqDiaSE.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/3-AcquireWellToGivenEqDiaSE.bin)]
 
 To get below SE < 0.1 it took 8 and 9 frames for the two wells and 384 and 480 objects respectively.
 This is because the simulator has two frames - one with more wells than the other - and as we acquired only two wells one had constantly more objects for every capture than the other.
@@ -343,7 +341,7 @@ The GA3 for checking the SE had to be slightly modified:
 
 ![GA3: recipe](images/47-GA3_CheckWellSE.png)
 
-The GA3 recipe to check the result: [CheckWellSE.ga3](CheckWellSE.ga3)
+The GA3 recipe to check the result: [[View on GitHub](CheckWellSE.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/CheckWellSE.ga3)]
 
 ## Stop acquiring plate when the Z-factor reaches given value
 
@@ -371,7 +369,7 @@ Acquire one well-plate with the following JOB:
 
 ![Well-plate JOBplate](images/50-AcquireWellplateFoZFactor_job.png)
 
-The job is [5-AcquireWellplateForZfactor.bin](5-AcquireWellplateForZfactor.bin)
+JOB file: [[View on GitHub](5-AcquireWellplateForZfactor.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/5-AcquireWellplateForZfactor.bin)]
 
 We will use the acquired image for making the GA3 recipe that will calculate the counts, means and variances for both positive and negative wells. We will use again Equivalent Diameter as in the example above.
 
@@ -403,7 +401,7 @@ We then sort the two rows alphabetically to make sure negative row is before pos
 
 The results show why the Z-factor was so poor: the means are very close together compared to their variances.
 
-The GA3 is in [PlateZfactor.ga3](PlateZfactor.ga3)
+The GA3 file: [[View on GitHub](PlateZfactor.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/PlateZfactor.ga3)]
 
 We can now make the final JOB by adding tasks as follows:
 
@@ -447,11 +445,11 @@ The Z-factor may not converge and consequently the JOB may run forever. As a mat
 
 ![JOB progress](images/65-Job_progress.png)
 
-The final job is available in [6-AcquireWellplateToGivenZfactor.bin](6-AcquireWellplateToGivenZfactor.bin)
+Final JOB file: [[View on GitHub](6-AcquireWellplateToGivenZfactor.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/6-AcquireWellplateToGivenZfactor.bin)]
 
 ## Stop acquiring plate when the Z-factor reaches given value using python script
 
-This example builds upon the previous section showing how to monitor the Z-factor value and stop when a target is met or when it is not converging. We will the Python script task instead of of the Macro task.
+This example builds upon the previous section showing how to monitor the Z-factor value and stop when a target is met or when it is not converging. We will use the Python script task instead of of the Macro task.
 
 Goals:
 
@@ -471,7 +469,7 @@ The Python code **must**:
 ```py
 import limjob
 
-def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+def run(imgs: tuple[limjob.Image], Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
     pass
 ```
 
@@ -532,7 +530,7 @@ def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float,
     V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
     return N, M, V
 
-def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+def run(imgs: tuple[limjob.Image], Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
     global total_n, total_m, total_v
     # for easier reference
     # all n, m, v are lists of length 2 (negative, positive)
@@ -603,7 +601,7 @@ def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float,
     V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
     return N, M, V
 
-def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+def run(imgs: tuple[limjob.Image], Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
     global total_n, total_m, total_v
     # for easier reference
     # all n, m, v are lists of length 2 (negative, positive)
@@ -643,7 +641,7 @@ We should remove the Wait from the Question and the continue button as well to m
 
 When we runt we should see the Z-factor $-28$ not changing the JOB should finish after three iterations of the time loop. We can consider the exercise done.
 
-The final Job is [7-AcquireWellplateToGivenZfactorPython.bin](7-AcquireWellplateToGivenZfactorPython.bin)
+Final JOB file: [[View on GitHub](7-AcquireWellplateToGivenZfactorPython.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/34-Acquire_until/7-AcquireWellplateToGivenZfactorPython.bin)]
 
 In order to test the convergence we can fake the Z-factor calculation (on line 33) as follows:
 
@@ -683,7 +681,7 @@ def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float,
     V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
     return N, M, V
 
-def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+def run(imgs: tuple[limjob.Image], Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
     global total_n, total_m, total_v
     # for easier reference
     # all n, m, v are lists of length 2 (negative, positive)
@@ -766,7 +764,7 @@ def updateMeanAndVariance(last_n: float, last_m: float, last_v: float, n: float,
     V = (last_n*(last_m - M)**2 + last_n*last_v + n*(m - M)**2 + n*v) / N
     return N, M, V
 
-def run(Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
+def run(imgs: tuple[limjob.Image], Job: limjob.JobParam, macro: limjob.MacroParam, ctx: limjob.RunContext):
     global total_n, total_m, total_v
     # for easier reference
     # all n, m, v are lists of length 2 (negative, positive)

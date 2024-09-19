@@ -21,7 +21,7 @@ Here we will assume a special case where we have a sample that has two peaks in 
 
 For camera simulator we will use an artificial two-foci z-stack:
 
-[fluo-agnor-two-foci-zstack.nd2](fluo-agnor-two-foci-zstack.nd2)
+Source ND2 file: [[View on GitHub](fluo-agnor-two-foci-zstack.nd2)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/fluo-agnor-two-foci-zstack.nd2)]
 
 Open it in NIS Elements and set it into the camera simulator by clicking on "Load current ND" in the Camera Simulator settings.
 
@@ -54,7 +54,7 @@ Create a simple JOB that acquires a Z-stack. In the Z-Stack definition task sele
 
 ![Acquire ZStack](images/04-AcquireZStack_job.png)
 
-The JOB is [0-AcquireZStack.bin](0-AcquireZStack.bin).
+JOB file: [[View on GitHub](0-AcquireZStack.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/0-AcquireZStack.bin)]
 
 > [!NOTE]
 > Before running the JOB make sure to click the "Reset Frame Position" button in the camera simulator.
@@ -84,7 +84,7 @@ In the scatterplot dialog select the data on axes as follows:
 
 In the graph we can see that there are two peaks in the focus criterion value. An that the middle is at 500 µm.
 
-The GA3 recipe: [FocusScatterplot.ga3](FocusScatterplot.ga3)
+The GA3 recipe: [[View on GitHub](FocusScatterplot.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/FocusScatterplot.ga3)]
 
 ### 3. Find the Z coordinate in the middle of two foci
 
@@ -96,7 +96,7 @@ The results show that the middle is at 500 µm.
 
 ![GA3 Custom focus results](images/10-CustomFocus_results.png)
 
-The GA3 recipe: [CustomFocus.ga3](CustomFocus.ga3)
+The GA3 recipe: [[View on GitHub](CustomFocus.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/CustomFocus.ga3)]
 
 ### 4. Move to custom focus plane in the JOB
 
@@ -128,7 +128,7 @@ When we run the job we can check if the last frame is acquired at the correct Z.
 
 ![Z coordinates](images/16-AcquireZStackForAF_outcome.png)
 
-The final JOB is [1-AcquireZStackForAF.bin](1-AcquireZStackForAF.bin).
+Final JOB file: [[View on GitHub](1-AcquireZStackForAF.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/1-AcquireZStackForAF.bin)]
 
 ## Perform AF in each well and then run imaging
 
@@ -144,4 +144,4 @@ Job.Wells.CurrentWell.Position.z = Job.CustomFocus.Tables.Records.MeanZcoord.Fir
 
 ![Acquire ZStack per well](images/20-AcquireWellZStackForAF_job.png)
 
-The final JOB is [2-AcquireWellZStackForAF.bin](2-AcquireWellZStackForAF.bin).
+Final JOB file: [[View on GitHub](2-AcquireWellZStackForAF.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/2-AcquireWellZStackForAF.bin)]

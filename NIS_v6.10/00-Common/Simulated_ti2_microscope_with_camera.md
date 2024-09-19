@@ -1,6 +1,8 @@
 # Simulated Nikon Ti2 with camera simulator
 
-## 1. device manager setup
+## 1. Device manager setup
+
+Following window is found in `Devices -> Devices Manager`.
 
 - Nikon Ti2 Simulator
 - Simulator 
@@ -27,6 +29,8 @@ Add the EPI by dragging it from the list on the left to the top position.
 
 ## 2. Camera setup
 
+You can now close Device manager and open Acquisition window in `View -> Acquisition Controls -> Acquisition`.
+
 Camera simulator plays a provided ND2 file in a loop.
 
 ![Camera simulator](images/camera_simulator_settings.png)
@@ -49,6 +53,8 @@ Add some filters into Turret 1:
 
 ## 4. Objectives
 
+Following window is found in `Calibration -> Objectives`.
+
 Check that objectives are calibrated (the calibrations are taken form Hamamatsu simulator):
 
 ![Objective calibration](images/Objectives.png)
@@ -67,8 +73,9 @@ Click on Set Pixel Size... and enter the number
 
 ![Calibrate objective](images/Calibrate_live_3.png)
 
-
 ## 5. Stage setup
+
+Following window is found in `View -> Acquisition Controls -> XYZ Overview`.
 
 Set the current stage position roughly in the middle of the scan area in order to avoid hitting the stage limits.
 ![XYZ Overview: go to the middle](images/xyz_overview.png)
