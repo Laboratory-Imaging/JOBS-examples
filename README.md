@@ -2,9 +2,6 @@
 
 Examples are organized into folders based on NIS Elements version which they were made with.
 
-> [!NOTE]
-> More examples are coming soon.
-
 ## Examples for NIS-Elements version 6.10
 
 - [Move to custom focus plane](NIS_v6.10/32-Move_to_custom_focus/README.md)
