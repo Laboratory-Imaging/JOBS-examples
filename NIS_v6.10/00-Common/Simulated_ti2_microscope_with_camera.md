@@ -5,7 +5,7 @@
 Following window is found in `Devices -> Devices Manager`.
 
 - Nikon Ti2 Simulator
-- Simulator 
+- Simulator
 - DIA Lamp
 - D-LEDI Simulator
 
@@ -73,19 +73,14 @@ Click on Set Pixel Size... and enter the number
 
 ![Calibrate objective](images/Calibrate_live_3.png)
 
-## 5. Simulated Stage setup                                                        
+## 5. Simulated Stage setup
 
 Following window is found in `View -> Acquisition Controls -> XYZ Overview`.
 
 Set the current stage position roughly in the middle of the scan area in order to avoid hitting the stage limits.
 ![XYZ Overview: go to the middle](images/xyz_overview.png)
 
-Alternatively:
+Alternatively in `View -> Acquisition Controls -> XYZ Navigation`.
 
-`View -> Acquisition Controls -> XYZ Navigation".
-
-Set values for X, Y and Z :![xyz-navigation](https://github.com/user-attachments/assets/28a99903-bfa3-4a79-a47d-d772d6bb8759)
-
-
-
-
+Set values for X, Y and Z directly: <br>
+![xyz-navigation](images/xyz_navigation.png)
