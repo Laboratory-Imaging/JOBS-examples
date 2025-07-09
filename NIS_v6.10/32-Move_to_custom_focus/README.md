@@ -23,7 +23,7 @@ For camera simulator we will use an artificial two-foci z-stack:
 
 Source ND2 file: [[View on GitHub](fluo-agnor-two-foci-zstack.nd2)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/fluo-agnor-two-foci-zstack.nd2)]
 
-Open it in NIS Elements and set it into the camera simulator by clicking on "Load current ND" in the Camera Simulator settings.
+Open it in NIS-Elements and set it into the camera simulator by clicking on "Load current ND" in the Camera Simulator settings.
 
 ![Two foci z-stack](images/01-two-foci-zstack.gif)
 
@@ -82,7 +82,7 @@ In the scatterplot dialog select the data on axes as follows:
 
 ![GA3 Scatterplot](images/08-FocusCriteria_results.png)
 
-In the graph we can see that there are two peaks in the focus criterion value. An that the middle is at 500 µm.
+In the graph we can see that there are two peaks in the focus criterion value, the middle is at 500 µm.
 
 The GA3 recipe: [[View on GitHub](FocusScatterplot.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/32-Move_to_custom_focus/FocusScatterplot.ga3)]
 

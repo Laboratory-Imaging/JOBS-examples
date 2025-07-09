@@ -30,4 +30,4 @@ To use the focus surface, you can scan the whole slide using the `Scan Large Ima
 
 ![Usage of the FS in LI](../10-Create_focus_surface_slide/images/cd_and_li.png)
 
-JOB file: [[View on GitHub](10-SlideCreateFocusSurface.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/10-Create_focus_surface_slide/10-SlideCreateFocusSurface.bin)] [[View as html](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/10-Create_focus_surface_slide/10-SlideCreateFocusSurface.html)]
+JOB file: <!---[[View on GitHub](10-SlideCreateFocusSurface.bin)]--> [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/10-Create_focus_surface_slide/10-SlideCreateFocusSurface.bin)] [[View as html](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/10-Create_focus_surface_slide/10-SlideCreateFocusSurface.html)]

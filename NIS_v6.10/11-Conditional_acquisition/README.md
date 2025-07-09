@@ -48,7 +48,7 @@ Well C7 | Well B11
 :-: | :-:
 ![Well C7](../11-Conditional_acquisition/images/well_c7_pink.png) | ![Well B11](../11-Conditional_acquisition/images/well_b11_pink.png)
 
-JOB file: [[View on GitHub](11-ConditionalAcquisition_CellCountAnalysis.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_CellCountAnalysis.bin)] [[View as html](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_CellCountAnalysis.html)]
+JOB file: <!---[[View on GitHub](11-ConditionalAcquisition_CellCountAnalysis.bin)]--> [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_CellCountAnalysis.bin)] [[View as html](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_CellCountAnalysis.html)]
 
 ### Counting cells using GA3
 
@@ -81,6 +81,6 @@ In the Export Parameters tab select Verdict, which is used in the `If` statement
 > [!NOTE]
 > You can also have other parameters exported, e.g. the Confidence parameter, which states how confident the GA3 recipe is about the Verdict.
 
-JOB file: [[View on GitHub](11-ConditionalAcquisition_GA3.bin)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_GA3.bin)] [[View as html](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_GA3.html)]
+JOB file: <!---[[View on GitHub](11-ConditionalAcquisition_GA3.bin)]--> [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_GA3.bin)] [[View as html](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-ConditionalAcquisition_GA3.html)]
 
-GA3 file: [[View on GitHub](11-detectCellPresence.ga3)] [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-detectCellPresence.ga3)]
+GA3 file: <!---[[View on GitHub](11-detectCellPresence.ga3)]--> [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v6.10/11-Conditional_acquisition/11-detectCellPresence.ga3)]
