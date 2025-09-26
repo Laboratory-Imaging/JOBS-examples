@@ -113,11 +113,13 @@ Examples are organized into folders based on NIS Elements version which they wer
 
 ### Python integration
 
-- [How to work with variables in JOBs with Python node and create a custom live plot](NIS_v6.10/61-JOBs-Python-1_variables/README.md) (provided by Andrii Rogov, NEBV)
+- [How to work with variables in JOBs with Python node and create a custom live plot](NIS_v6.10/61-JOBs-Python-1_variables/README.md)
 
-- [How to work with image data in JOBs with Python node and create live MAXIP preview](NIS_v6.10/61-JOBs-Python-2-MAXIP/README.md) (provided by Andrii Rogov, NEBV)
+- [How to work with image data in JOBs with Python node and create live MAXIP preview](NIS_v6.10/61-JOBs-Python-2-MAXIP/README.md)
 
-- [How to control hardware with Python/Macro combination in JOBs](NIS_v6.10/61-JOBs-Python-3-HW_control/README.md) (provided by Andrii Rogov, NEBV)
+- [How to control hardware with Python/Macro combination in JOBs](NIS_v6.10/61-JOBs-Python-3-HW_control/README.md)
+
+(provided by Andrii Rogov, NEBV)
 
 ## Examples for NIS-Elements version 5.42
 
