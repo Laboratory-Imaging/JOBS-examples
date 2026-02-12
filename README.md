@@ -2,7 +2,17 @@
 
 Examples are organized into folders based on NIS Elements version which they were made with.
 
-## Examples for NIS-Elements version 6.10 (Current)
+## Examples for NIS-Elements version 7.01 (Next)
+
+### Python
+
+- [Python in JOBs](NIS_v7.01/61-Python_in_JOBs/README.md)
+
+### Fluidic device
+
+- [ARIA fluidic control](NIS_v7.01/62-Aria_fluidic_control/README.md)
+
+## Examples for NIS-Elements version 6.20 (Current)
 
 ### Focus & Z‑Stack
 

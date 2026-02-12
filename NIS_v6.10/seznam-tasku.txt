@@ -1,0 +1,222 @@
+
+
+>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<
+
+-> seznam tasku z helpu 6.10
+-> tasky, co za sebou maji "-- ANO" jsou pouzity (nemusi byt vysvetleny) v aspon jednom examplu
+
+>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<
+
+
+
+Define Plate -- ANO
+Use Autodetected Plate -- ANO
+Align Well Plate Holder
+Detect Plate Automatically -- ANO
+Select Wells -- ANO
+Empty/Full Well Selection -- ANO
+Add Well to Selection -- ANO
+Remove Well from Selection -- ANO
+Edit Well Selection
+Use Well Selection from Sample Navigation -- ANO
+Create Well Selection from Point Set
+Loop over Wells -- ANO
+Label Wells -- ANO (jmenuje se to Label Well Plate ale v helpu je to jako Label Wells)
+Use Well Labeling from Sample Navigation -- ANO
+Export Well Labeling to Sample Navigation -- ANO
+Export Well Selection to Sample Navigation -- ANO
+Plate Loader
+Manual Plate List -- ANO
+Loop over Plates -- ANO
+Move to Well
+Move to Well Center -- ANO
+Move to Previous/Next Well
+Copy Well Point Set
+Continuous Scan of Well Centers -- ANO
+Find Well by Analysis -- ANO
+Load Plate to Stage
+Unload Plate from Stage
+Define Slide -- ANO
+Define Stage Area -- ANO
+Align Slide Holder -- ANO
+Slide Loader -- ANO
+Manual Slide List -- ANO
+Loop over Slides -- ANO
+Advanced Loop over Slides -- ANO
+Load Slide to Stage -- ANO
+Unload Slide from Stage -- ANO
+Time Lapse -- ANO
+Redefine Time Lapse -- ANO
+Time Sequence -- ANO
+Repeat N times -- ANO
+Keep Object In View -- ANO
+Generate Points -- ANO
+Predefined Points -- ANO
+New Point Set -- ANO
+Loop over Points -- ANO
+Move to Point
+Move to Previous/Next Point
+Offset Point Set
+Add Point to Point Set
+Remove Point from Point Set
+Add/Edit Points Manually -- ANO
+Append Point Set to Point Set
+Clear Point Set
+Export Point Set to ND -- ANO
+Import Point Set from ND -- ANO
+Get Current XY Position
+Move to XY Position
+Set XY Speed/Accuracy
+Import Area From Sample Navigation
+Scan Large Image -- ANO
+Scan Large Image in Slide/Well/Area -- ANO
+Scan Large Image in Region -- ANO
+Scan Large Image by Continuous Movement -- ANO
+Draw Regions -- ANO
+Shift Region
+Edit Regions -- ANO
+Region List -- ANO
+Loop over Regions -- ANO
+Move to Region Center -- ANO
+Append Region List to Region List -- ANO
+Clear Region List
+Empty Region -- ANO
+Store Region Overview
+Extract Region List
+Use Regions from Sample Navigation -- ANO
+Define Z-Stack -- ANO
+Z-Stack Bottom and Top -- ANO
+Z-Stack Piezo from Bottom -- ANO
+Z-Stack by Expression -- ANO
+Z-Stack Loop -- ANO
+Assign Z-Stack to Point/Well/ND Acquisition
+Move to Z-Stack home
+Set Z Speed/Accuracy
+Reset Piezo Z Position
+Define ROI
+Use ROI from Analysis -- ANO (ASI???? 5.40)
+Assign ROI to Point/Well
+Autofocus Settings -- ANO
+Fast Autofocus Settings -- ANO
+Autofocus -- ANO
+Autofocus Short -- ANO
+Autofocus Long -- ANO
+Create Focus Surface -- ANO
+Move to Focus Surface
+Offset Focus Surface
+Assign Current Z to Point/Well/Point Set -- ANO
+Escape Z -- ANO
+Refocus Z -- ANO
+Get Current Z Position
+Set Focus Position
+Move to Z Position
+Move ACC
+Move to Predefined Z Position
+Autofocus using AI
+PFS On and Focus
+PFS Off
+PFS DM In
+PFS DM Out
+PFS Offset from the current z position
+Auto PFS Focus Setup
+Auto PFS Focus
+Assign PFS to Point/Well
+Create PFS Surface
+Move to PFS Surface
+Offset PFS Surface
+Capture Definition -- ANO
+Capture -- ANO
+Capture Current OC -- ANO
+Capture HDR
+Capture Current OC HDR
+Capture Current OC Continuous EDF
+Capture Scan Area
+Capture VC
+Capture and Reconstruct VC
+ND Acquisition
+Fast Timelapse -- ANO
+Triggered Experiment
+Illumination Sequence
+Live Window -- ANO
+Merge and Store Captured Images
+Detect Background
+Save Captured Image
+Capture N-SIM
+STORM Acquisition
+SPTplus Acquisition
+Assign Capture Definition
+Load Capture Definition
+Adjust Camera ROI
+Loop over Components
+Sequential Stimulation -- ANO (ASI??? 5.40)
+Simultaneous Stimulation
+Select Optical Configuration -- ANO
+Auto Brightness
+Autosignal.ai -- ANO
+Aggregate Autosignal.ai Results -- ANO
+Set Exposure to Optical Configuration
+Adjust Camera Settings Manually in OC
+Assign Camera Settings to Point/Well
+Interpolate Exposure between Wells
+Close Shutter
+Open Shutter
+Set Brightfield Acquisition
+Set Brightfield Acquisition 4x
+Select Objective -- ANO
+Select Capture Definition OC
+Condition (If) -- ANO
+Condition (If-Else) -- ANO
+Every nth
+Break -- ANO
+Continue
+Logical Expression
+Question -- ANO
+Macro -- ANO
+PythonScript -- ANO
+Expression -- ANO
+Variables -- ANO
+Custom Metadata
+Wait
+Comment -- ANO
+Send E-mail Notification
+Send SMS Notification
+Create Labels -- ANO
+Assign Label -- ANO
+Set Class
+Debug
+Phase
+Finish
+Abort
+Execute Macro After Run
+Execute Python After Run
+Backup After Run
+Alternative Storage Location
+Storage
+Block -- ANO
+Exit with Error -- ANO
+Alternate_FileName
+Define Analysis
+General Analysis
+Cell Count Analysis -- ANO
+Intensity Analysis -- ANO
+General Analysis RGB
+Out Proc
+Wound Healing
+Live/Dead Analysis -- ANO
+General Analysis 3 -- ANO
+Average
+Best Focus Plane
+Integrate
+Max IP
+Median
+Min IP
+Align
+Equalize Intensity
+Stitch
+Clear Temporary Data
+Temperature and Gas Control
+Analog Out
+Replenish Water
+Wait for I/O Event
+
+??? Copy Well Selection -- ANO (chybi v helpu)
