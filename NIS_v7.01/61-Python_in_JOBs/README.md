@@ -7,19 +7,23 @@ This page describes JOB tasks that execute Python scripts and provides simple ex
   - [Default code template](#default-code-template)
   - [Task Parameters](#task-parameters)
   - [Input Images](#input-images)
-  - [Execute in the main thread](#execute-in-the-main-thread)
+  - [Execute in the main/jobs thread](#execute-in-the-main-thread) (new in 7.01)
+  - [Python code execution model](#python-code-execution-model)
+  - [Available built-in python modules](#python-code-execution-model)
   - [DeviceManager API](#devicemanager-api)
   - [Pointset](#pointset)
   - [Image](#image)
   - [Examples](#examples)
 - [Execute Python after Run task](#execute-python-after-run-task)
   - [Default code template](#default-code-template-1)
-  - [Examples](#examples)
+  - [Examples](#examples-1)
 - [Using NIS macro in Python](#using-nis-macro-in-python)
   - [Purpose of the nis module](#purpose-of-the-nis-module)
   - [Calling NIS macro functions](#calling-nis-macro-functions)
 
 ## Python Script task
+
+![Task GUI](images/python-script-task.png)
 
 The `Python Script` task execute Python code.
 Its alternative to `Run Macro` task. It enables you to use both
@@ -110,10 +114,10 @@ You can add a new parameter by clicking the `+` button, then defining
 * Initial value
 
 The initial value is evaluated as python code.
-For example, for initializing float array you can use either `[0, 1, 2, 3, 4]` or `range(0,5)`. 
-Parameters are reinitialized each time the JOB program starts. 
+For example, for initializing float array you can use either `[0, 1, 2, 3, 4]` or `range(0,5)`.
+Parameters are reinitialized each time the JOB program starts.
 
-Task parameters: 
+Task parameters:
 * Can be accessed for reading and writing within the same task.
 * Can also be accessed and edited by other tasks (e.g., an Expression task).
 
@@ -144,12 +148,14 @@ To access the selected images in Python, use the `imgs` input parameter in the `
 >
 > Ensure that both tasks are located within the same loop scope if image data needs to be shared.
 
+
 ### Execute in the main thread
 
-The Execute in the main thread checkbox controls whether the Python script runs in the NIS-Elements main application thread or in a background (side) thread.
+The Execute in the main thread checkbox controls whether the Python script runs in the NIS-Elements main GUI application thread or in a background (JOBS) thread.
 
 #### When Enabled
 * The script runs in the main thread of NIS-Elements.
+* It is blocking the GUI when executing python code.
 * Required when:
   * Calling certain NIS macro functions
   * Accessing or modifying macro variables
@@ -158,7 +164,7 @@ The Execute in the main thread checkbox controls whether the Python script runs 
 If a macro function requires main-thread execution and this option is not enabled, the script may fail or behave unpredictably.
 
 #### When Disabled
-* The script runs in a side thread.
+* The script runs in the JOBS thread.
 * Recommended for:
   * Long-running calculations
   * Image processing
@@ -173,7 +179,143 @@ Running in a side thread:
 >
 > Enable this option when using macro functions. Disable it for computational tasks that do not require macro interaction and benefit from responsive UI behavior.
 
+### Python code execution model
+
+The python code is evaluated when the job is initialized. The `run(...)` function is called every time the task is executed in the JOBs sense:
+more than once when the task is in a loop. Module level variables may be used to store values between consecutive `run(...)` calls.
+
+Each Python node is defined in a dedicated python module separated from others. Hence it has its own namespace.
+
+Nodes can share state between each other using:
+
+1. provided JOBS tools (for primitive types)
+    - task parameters (Python's or of other nodes)
+    - macro variables
+
+2. python language tools (for python managed objects)
+    - ad-hoc module attributes (see example below)
+    - proper dedicated module with supporting functionality (see example below)
+    - files, ...
+
+#### How to use a module (e.g. limjob) to share ad hoc state between tasks
+
+In JOBS python nodes are executed in within the NIS-Elements process inside a single python interpreter. In python
+every module is a *singleton* guaranteed to exist in exactly one instance. This feature can be used to store the
+state and be sure to always access the same state. We use `limjob` for convenience as it must be imported anyway.
+
+As python is an interpreted language it is possible to read, write and query attributes of a module after it is loaded using
+[`setattr(...)`](https://docs.python.org/3/library/functions.html#setattr),
+[`getattr(...)`](https://docs.python.org/3/library/functions.html#getattr),
+[`delattr(...)`](https://docs.python.org/3/library/functions.html#delattr) and
+[`hasattr(...)`](https://docs.python.org/3/library/functions.html#hasattr).
+
+> [!WARNING]
+>
+> Be careful not to overwrite existing module attribute.
+
+> [!NOTE]
+>
+> The attribute remains in the module until NIS-Elements end (the module is unloaded) unless explicitly deleted.
+> When using this technique be sure to first initialize such attribute before using it.
+
+See an example [How to share state between Python tasks](sharing-state-example.md).
+
+#### How to create dedicated module
+
+When the functionality grows above a level that is manageable from within one python task it is better to create
+a dedicated module (a python file) that exposes its functionality using functions. It hides the complexity and
+state.
+
+Modules are loaded from the Python site-package folder inside NIS-Elements installation:
+```
+C:\Program Files\NIS-Elements\Python\Lib\site-packages
+```
+
+However it is more convenient to have the module elsewhere (perhaps under version control like git) and add
+that folder to the Python path variable using:
+
+```python
+# IMPORTANT: 'limjob' must be imported like this (not from nor as)
+import limjob
+
+# Add a folder to search path
+# This has to be done only once (in the first python task)
+import sys
+sys.path.append(R'C:\NisPythonExtensions\MyRobot')
+
+# the C:\NisPythonExtensions\MyRobot will be searched for robot_control.py
+from robot_control import connect_robot, disconnect_robot, command_for_robot
+
+# Use the imported functionality
+```
+
+See an example [How to create a dedicated module](dedicated-module-example.md).
+
+### Available built-in python modules
+
+The following list of modules is preinstalled with NIS-Elements. Any of these modules can be safely used.
+
+- httpx
+- Jinja2
+- limnd2
+- matplotlib
+- numpy
+- ome_types
+- openpyxl
+- pandas
+- packaging
+- paramiko
+- psutil
+- pydantic
+- pydantic-settings
+- pywin32
+- playwright
+- requests
+- scikit-image
+- scikit-learn
+- scipy
+- uvicorn[standard]
+
+Additional Python packages can be installed and managed with `pip.bat` from the NIS-Elements folder:
+
+1. Change to the NIS-Express directory
+
+```cmd
+cd "C:\Program Files\NIS-Elements"
+```
+2. Install a package using `pip.bat`. It has same syntax as pip.exe.
+
+```cmd
+pip.bat install <package>
+```
+
+or alternatively, use `python.bat` to call pip
+
+```cmd
+python.bat -m pip install <package>
+```
+
+3. Run the interpreter and try to import the package.
+
+```cmd
+python.bat
+>>> import <package>
+```
+
+> [!WARNING]
+>
+> Installing other packages in the internal Python may potentially break NIS-Elements.
+> Be especially careful with large packages such as torch or tensorflow which may require
+> different version of built-in packages or dlls which NIS-Elements use as well. <br/>
+> Failing to do so may require reinstalling NIS-Elements.
+
+> [!NOTE]
+>
+> In order to use potentially breaking package install it using conda/mamba environment managers outside NIS-Elements.
+> Run it using python ipc primitives (tasks, workers). 
+
 ### DeviceManager API
+
 There are currently implemented few “global” functions which can be called inside the function `run`. Parameters and returned values are in micrometres.
 
 > [!WARNING]
@@ -237,12 +379,22 @@ def run(imgs, Job, macro, ctx):
 ````
 
 ## Execute Python after Run task
+
+![Task GUI](images/python-run-after-task.png)
+
 The `Execute Python After Run` task is executed after the JOB finished.
 Its alternative to `Execute Macro after Run` task. It enables you to use both
 * Python code
 * NIS macro calls (via [`nis` module](#using-nis-macro-in-python))
 
+At that point all files are saved and closed. It is ideal time to call analyses or convert the files.
+
+> [!NOTE]
+>
+> If multiple "... after Run" tasks are present they are executed in the same order as they appear in the JOB.
+
 ### Default code template
+
 The task provides the following default structure:
 ````python
 import limjob
@@ -297,7 +449,9 @@ It is expected to be always defined and having these inputs:
   * See `limjob.py` in the `site-packages folder` for available methods (see [examples](#examples))
 
 ### Examples
+
 #### Opening jobrun folder after execution.
+
 ````python
 import limjob
 import nis
@@ -359,6 +513,10 @@ OpenLogFile();
 # Python calling
 nis.mac.OpenLogFile()
 ````
+
+The python editor has an auto-complete functionality.
+
+![Python editor auto-complete](images/python-taskk-editor-is.png)
 
 > [!NOTE]
 > If input parameter has type `char *`, you can pass either a Python `str` or a `nis.mac.char()` object.
