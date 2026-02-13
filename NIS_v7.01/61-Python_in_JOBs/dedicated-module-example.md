@@ -4,7 +4,7 @@ This example shows how to create and use a module to hide complex implementation
 
 ![Python state example](images/python-module-example-1.png)
 
-JOB file: [[Download link](https://laboratory-imaging.github.io/JOBS-examples\NIS_v7.01\61-Python_in_JOBs\PythonExampleDedicatedModule.bin)]
+JOB file: [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v7.01/61-Python_in_JOBs/PythonExampleDedicatedModule.bin)]
 
 Let' assume we have
 

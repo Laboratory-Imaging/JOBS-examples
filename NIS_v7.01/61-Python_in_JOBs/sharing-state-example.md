@@ -4,7 +4,7 @@ This example shows how to share a dict using a module. Here `limjob` which is im
 
 ![Python state example](images/python-state-example-1.png)
 
-JOB file: [[Download link](https://laboratory-imaging.github.io/JOBS-examples\NIS_v7.01\61-Python_in_JOBs\PythonExampleSharingState.bin)]
+JOB file: [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v7.01/61-Python_in_JOBs/PythonExampleSharingState.bin)]
 
 ```python
 # TASK PyInit

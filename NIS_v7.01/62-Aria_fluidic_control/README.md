@@ -115,12 +115,12 @@ Save the sequence (for example, into the default Aria sequences folder):
 > [!IMPORTANT]
 > #### Imaging step managed by TCP signals
 > The Aria instrument will run fluidic steps such as injections or washing. To trigger actions in NIS-Elements JOBS (for example, image acquisition) at specific points in the sequence, insert the following two steps at each place where you want JOBS to take over:
-> 
+>
 > * **Send signal**, TCP signal, message "READ_BY_PYTHON_LOOP_TASK"
 > * **Wait for signal**, TCP signal, timeout 12 hours, Start listening before the step starts
-> 
+>
 > It is important to set both signals to **TCP** and to set the **Wait for signal** timeout to e.g. **12 hours**, so JOBS has enough time to complete its tasks and send the signal back to Aria. For **Wait for signal**, also enable **Start listening before the step starts**.
-> 
+>
 > You can set a custom **Message** in **Send signal**. The `Python Loop` can read this message (via `last_tcp_message()`) and use it for things like file naming or branching to different actions.
 
 > [!NOTE]
@@ -177,8 +177,8 @@ def loop_init(Job: limjob.JobParam, ctx: limjob.RunContext) -> limjob.Loop:
 def loop_condition(loop: limjob.Loop, Job: limjob.JobParam, ctx: limjob.RunContext) -> bool:
     test = limjob_aria.loop_condition(loop, Job, ctx)
     msg = limjob_aria.last_tcp_message()
-    
-    nis.mac.Jobs_SetFilenamePart("Count", False, None, None, 0) 
+
+    nis.mac.Jobs_SetFilenamePart("Count", False, None, None, 0)
     nis.mac.Jobs_SetFilenamePart("Channel", False, None, None, 0)
     nis.mac.Jobs_SetFilenamePart("Seq", False, None, None, 0)
     nis.mac.Jobs_SetFilenamePart("Prefix", True, str(msg), None, 0)
@@ -208,6 +208,8 @@ In the `Storage` section, select `Single TIFF` so each capture is saved as a sep
 For this example, file naming is handled by the Python script inside the `Python Loop` task and will be explained later.
 
 ![Capture Task](../62-Aria_fluidic_control/images/SingleFileOption.png)
+
+JOB file: [[Download link](https://laboratory-imaging.github.io/JOBS-examples/NIS_v7.01/62-Aria_fluidic_control/AriaCapture.bin)]
 
 ### JOBS Custom Progress
 
@@ -299,7 +301,7 @@ The Python Loop task requires that the script defines the following three functi
 * `def loop_init(Job: limjob.JobParam, ctx: limjob.RunContext) -> limjob.Loop`
   * This function is called:
     * at the beginning of the Job execution, and
-    * at the start of each loop cycle  
+    * at the start of each loop cycle
   * It is responsible for initializing and returning the `limjob.Loop` object.
 
 * `def loop_condition(loop: limjob.Loop, Job: limjob.JobParam, ctx: limjob.RunContext) -> bool`
@@ -310,7 +312,7 @@ The Python Loop task requires that the script defines the following three functi
     * True → continue the loop
     * False → terminate the loop
 
-* `def loop_step(loop: limjob.Loop, Job: limjob.JobParam, ctx: limjob.RunContext) -> limjob.Loop`  
+* `def loop_step(loop: limjob.Loop, Job: limjob.JobParam, ctx: limjob.RunContext) -> limjob.Loop`
   * This function is called at the end of each loop iteration.
   * It typically updates and returns the modified `limjob.Loop` object (e.g., incrementing counters or updating state).
 
