@@ -2,7 +2,7 @@
 
 Examples are organized into folders based on NIS Elements version which they were made with.
 
-## Examples for NIS-Elements version 7.01 (Next)
+## Examples for NIS-Elements version 7.01 (Coming soon)
 
 ### Python
 
@@ -11,6 +11,10 @@ Examples are organized into folders based on NIS Elements version which they wer
 ### Fluidic device
 
 - [ARIA fluidic control](NIS_v7.01/62-Aria_fluidic_control/README.md)
+
+### External form
+
+- [Simple external text editor](NIS_v7.01/63-Simple_text_area/README.md)
 
 ## Examples for NIS-Elements version 6.20 (Current)
 

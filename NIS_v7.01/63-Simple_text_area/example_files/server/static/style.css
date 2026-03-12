@@ -1,0 +1,97 @@
+:root {
+    color-scheme: light dark;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background: white;
+    color: black;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+textarea,
+input,
+button,
+pre {
+    font: inherit;
+    border: 1px solid #888;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+textarea,
+input[type="text"] {
+    width: 100%;
+    height: 150px;
+    box-sizing: border-box;
+    background: white;
+    color: black;
+}
+
+button {
+    margin-top: 10px;
+    margin-right: 8px;
+    background: #f0f0f0;
+    color: black;
+    cursor: pointer;
+}
+
+pre {
+    margin-top: 16px;
+    min-height: 40px;
+    background: #f7f7f7;
+}
+
+html[color-theme="dark"] body {
+    background: #646464;
+    color: #e8e8e8;
+}
+
+html[color-theme="dark"] textarea,
+html[color-theme="dark"] input[type="text"] {
+    background: #444444;
+    color: #f0f0f0;
+    border-color: #666;
+}
+
+html[color-theme="dark"] button {
+    background: #444444;
+    color: #f0f0f0;
+    border-color: #666;
+}
+
+html[color-theme="dark"] pre {
+    background: #444444;
+    color: #f0f0f0;
+    border-color: #666;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1e1e1e;
+        color: #e8e8e8;
+    }
+
+    textarea,
+    input[type="text"] {
+        background: #2b2b2b;
+        color: #f0f0f0;
+        border-color: #666;
+    }
+
+    button {
+        background: #333;
+        color: #f0f0f0;
+        border-color: #666;
+    }
+
+    pre {
+        background: #2b2b2b;
+        color: #f0f0f0;
+        border-color: #666;
+    }
+}

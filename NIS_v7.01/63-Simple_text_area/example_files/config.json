@@ -1,0 +1,33 @@
+{
+    "api_version": "0.1",
+    "name": "SimpleTextArea",
+    "version": "1.0.0",
+    "description": "Simple text area demo example",
+    "endpoint": {
+        "scheme": "http",
+        "host": "127.0.0.1",
+        "port": 8080
+    },
+    "routes": {
+        "gui": "/{{TASK}}/external-form/ui",
+        "value": "/{{TASK}}/external-form/value",
+        "health": "/health"
+    },
+    "runtime": {
+        "startup_port_check_ms": 500,
+        "startup_port_timeout_ms": 10000,
+        "startup_timeout_ms": 5000,
+        "health_poll_ms": 1000,
+        "health_timeout_ms": 200,
+        "value_poll_ms": 5000,
+        "value_timeout_ms": 5000
+    },
+    "server_process": {
+        "program": "{{ROOT}}/.venv/Scripts/uvicorn.exe",
+        "args": [
+            "server.main:app",
+            "--host", "{{HOST}}",
+            "--port", "{{PORT}}"
+        ]
+    }
+}
