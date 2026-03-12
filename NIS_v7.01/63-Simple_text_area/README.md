@@ -59,7 +59,8 @@ SimpleTextArea/
 └── config.json
 ```
 
-The full example directory is available [here](./example_files/) an all files can be [downloaded](./example_files/files.zip) as single zip file.
+The full example directory is available [here](./example_files/) an all files can be
+[downloaded](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.01/63-Simple_text_area/example_files.zip) as single zip file.
 
 ## The task
 
