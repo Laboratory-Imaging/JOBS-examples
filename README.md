@@ -2,7 +2,11 @@
 
 Examples are organized into folders based on NIS Elements version which they were made with.
 
-## Examples for NIS-Elements version 7.01 (Coming soon)
+## Examples for NIS-Elements version 7.01
+
+### GA3 in JOBs
+
+- [Which GA3 task to use for what](NIS_v7.01/51-GA3_in_JOBs/README.md)
 
 ### Python
 
