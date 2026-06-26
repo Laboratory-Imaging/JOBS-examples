@@ -20,6 +20,10 @@ Examples are organized into folders based on NIS Elements version which they wer
 
 - [Simple external text editor](NIS_v7.01/63-Simple_text_area/README.md)
 
+### Interactive scatter plot
+
+- [Interactive scatter plot](NIS_v7.01/64-Interactive_scatter_plot/README.md)
+
 ## Examples for NIS-Elements version 6.20 (Current)
 
 ### Focus & Z‑Stack

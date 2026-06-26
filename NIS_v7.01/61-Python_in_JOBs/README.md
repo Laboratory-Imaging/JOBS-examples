@@ -195,6 +195,7 @@ Nodes can share state between each other using:
 2. python language tools (for python managed objects)
     - ad-hoc module attributes (see example below)
     - proper dedicated module with supporting functionality (see example below)
+    - dedicated REST server with supporting functionality
     - files, ...
 
 #### How to use a module (e.g. limjob) to share ad hoc state between tasks
@@ -250,6 +251,37 @@ from robot_control import connect_robot, disconnect_robot, command_for_robot
 ```
 
 See an example [How to create a dedicated module](dedicated-module-example.md).
+
+#### How to create REST server
+
+Creating a REST server is the most powerful option.
+
+Advantages:
+- **Any python package can be used** as the server is in different process.
+- **Custom UI** can be cerated and shown in a browser.
+- As a true **singleton** it is a model suitable to control a device.
+- Can run on a **remote** machine.
+
+Drawback:
+- **Requires programming** effort and a level of technical understanding.
+
+![REST Server](images/python-rest-api.png "REST server diagram")
+
+The **server** is completely independent from NIS-Elements. The interface is HTTP (not Python). For convenience we use
+Python with [FastAPI](https://fastapi.tiangolo.com/) to implement [REST API](https://restfulapi.net/http-methods/)
+server interface (endpoints). The server may optionally implement an UI/dashboard to show status and control the
+underlying state or device.
+
+The server has to be programmed by the user. Fortunately Python includes lot of libraries for controlling devices
+and generating HTML. Furthermore, the [vibe coding](https://www.ibm.com/think/topics/vibe-coding) makes it possible that
+non-programmes can create such server in hours.
+
+The **client** Python code in JOBS can use standard
+[urllib.request](https://docs.python.org/3/library/urllib.request.html#module-urllib.request)
+or [httpx](https://www.python-httpx.org/#documentation) for
+HTTP communication with the server.
+
+See an example [Interactive scatterplot](/NIS_v7.01/64-Interactive_scatter_plot/).
 
 ### Available built-in python modules
 
@@ -312,7 +344,7 @@ python.bat
 > [!NOTE]
 >
 > In order to use potentially breaking package install it using conda/mamba environment managers outside NIS-Elements.
-> Run it using python ipc primitives (tasks, workers). 
+> Run it using python ipc primitives (tasks, workers).
 
 ### DeviceManager API
 
