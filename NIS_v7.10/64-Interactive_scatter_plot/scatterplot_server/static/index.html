@@ -1,0 +1,252 @@
+﻿<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scatterplot</title>
+  {{ bokeh_css|safe }}
+  {{ bokeh_js|safe }}
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: {% if theme == "dark" %}#1f1f1f{% else %}#f7f7f7{% endif %};
+      color: {% if theme == "dark" %}#f2f2f2{% else %}#222{% endif %};
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    button {
+      border: 1px solid {% if theme == "dark" %}#666{% else %}#bbb{% endif %};
+      border-radius: 6px;
+      padding: 8px 16px;
+      background: {% if theme == "dark" %}#f2f2f2{% else %}#222{% endif %};
+      color: {% if theme == "dark" %}#222{% else %}#fff{% endif %};
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:disabled {
+      cursor: default;
+      opacity: 0.45;
+    }
+
+    .status,
+    .selection-status,
+    .done-status {
+      margin: 0 0 16px;
+      font-size: 14px;
+      color: {% if theme == "dark" %}#cfcfcf{% else %}#555{% endif %};
+    }
+
+    .selection-status {
+      margin-top: 16px;
+      white-space: pre-wrap;
+    }
+
+    .done-status {
+      margin-top: 12px;
+    }
+
+    .plot {
+      background: {% if theme == "dark" %}#2b2b2b{% else %}#fff{% endif %};
+      border: 1px solid {% if theme == "dark" %}#444{% else %}#ddd{% endif %};
+      border-radius: 8px;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Select cells to image in hi mag</h1>
+    <p id="status" class="status">
+      {% if has_points %}
+        Loaded points count: {{ points_count }}
+      {% else %}
+        Waiting for points...
+      {% endif %}
+    </p>
+    <section class="plot">
+      {{ plot_div|safe }}
+    </section>
+    <p id="selection-status" class="selection-status">Selected points count: 0</p>
+    <button id="done-button" type="button" disabled>Done</button>
+    <p id="done-status" class="done-status"></p>
+    {{ plot_script|safe }}
+    <script>
+      const valueUrl = {{ (value_url|default("/" ~ job_task_id ~ "/value"))|tojson }};
+      const selectedUrl = {{ (selected_url|default("/" ~ job_task_id ~ "/selected"))|tojson }};
+      const statusElement = document.getElementById("status");
+      const selectionStatusElement = document.getElementById("selection-status");
+      const doneButton = document.getElementById("done-button");
+      const doneStatusElement = document.getElementById("done-status");
+      let pollingTimer = null;
+      let currentSource = null;
+
+      function getPointsSource() {
+        if (!window.Bokeh || !Bokeh.documents) {
+          return null;
+        }
+
+        for (const doc of Bokeh.documents) {
+          const source = doc.get_model_by_name("points_source");
+          if (source) {
+            return source;
+          }
+        }
+
+        return null;
+      }
+
+      function selectedPoints(source) {
+        return source.selected.indices.map((index) => {
+          return { x: source.data.x[index], y: source.data.y[index] };
+        });
+      }
+
+      function updateSelectionStatus(source) {
+        const points = selectedPoints(source);
+        doneButton.disabled = points.length === 0;
+        doneStatusElement.textContent = "";
+
+        if (points.length === 0) {
+          selectionStatusElement.textContent = "Selected points count: 0";
+          return;
+        }
+
+        const selectedText = points.map((point) => `(${point.x}, ${point.y})`);
+        selectionStatusElement.textContent = `Selected points count: ${points.length}\n${selectedText.join(", ")}`;
+      }
+
+      function attachSelectionCallback(source) {
+        currentSource = source;
+        if (source._selectionCallbackAttached) {
+          updateSelectionStatus(source);
+          return;
+        }
+
+        source.selected.change.connect(() => updateSelectionStatus(source));
+        source._selectionCallbackAttached = true;
+        updateSelectionStatus(source);
+      }
+
+      async function sendSelectedPoints() {
+        if (!currentSource) {
+          return;
+        }
+
+        const points = selectedPoints(currentSource);
+        if (points.length === 0) {
+          return;
+        }
+
+        doneButton.disabled = true;
+        doneStatusElement.textContent = "sending the selection...";
+
+        try {
+          const response = await fetch(selectedUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ value: points }),
+          });
+
+          if (!response.ok) {
+            doneStatusElement.textContent = "Selection sending failed.";
+            doneButton.disabled = false;
+            return;
+          }
+
+          doneStatusElement.textContent = `Sent points count: ${points.length}`;
+        } catch (error) {
+          doneStatusElement.textContent = "Selection sending failed.";
+          doneButton.disabled = false;
+        }
+      }
+
+      async function updatePlotFromServer() {
+        try {
+          const response = await fetch(valueUrl, { cache: "no-store" });
+          if (!response.ok) {
+            return;
+          }
+
+          const data = await response.json();
+          if (!Array.isArray(data.value) || data.value.length === 0) {
+            return;
+          }
+
+          const xValues = [];
+          const yValues = [];
+          const sizeValues = [];
+          const circularityValues = [];
+          for (const point of data.value) {
+            if (
+              point &&
+              Object.prototype.hasOwnProperty.call(point, "x") &&
+              Object.prototype.hasOwnProperty.call(point, "y") &&
+              Object.prototype.hasOwnProperty.call(point, "size") &&
+              Object.prototype.hasOwnProperty.call(point, "circularity")
+            ) {
+              xValues.push(point.x);
+              yValues.push(point.y);
+              sizeValues.push(point.size);
+              circularityValues.push(point.circularity);
+            }
+          }
+
+          if (xValues.length === 0) {
+            return;
+          }
+
+          const source = getPointsSource();
+          if (!source) {
+            return;
+          }
+
+          source.data = {
+            x: xValues,
+            y: yValues,
+            size: sizeValues,
+            circularity: circularityValues,
+          };
+          source.selected.indices = [];
+          source.change.emit();
+          source.selected.change.emit();
+          attachSelectionCallback(source);
+          statusElement.textContent = `Loaded points count: ${xValues.length}`;
+
+          if (pollingTimer !== null) {
+            clearInterval(pollingTimer);
+            pollingTimer = null;
+          }
+        } catch (error) {
+          // The next polling interval will try again.
+        }
+      }
+
+      doneButton.addEventListener("click", sendSelectedPoints);
+
+      const initialSource = getPointsSource();
+      if (initialSource) {
+        attachSelectionCallback(initialSource);
+      }
+      updatePlotFromServer();
+      pollingTimer = setInterval(updatePlotFromServer, 2000);
+    </script>
+  </main>
+</body>
+</html>

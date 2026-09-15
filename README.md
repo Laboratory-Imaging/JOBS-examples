@@ -2,29 +2,27 @@
 
 Examples are organized into folders based on NIS Elements version which they were made with.
 
-## Examples for NIS-Elements version 7.01
-
-### GA3 in JOBs
-
-- [Which GA3 task to use for what](NIS_v7.01/51-GA3_in_JOBs/README.md)
-
-### Python
-
-- [Python in JOBs](NIS_v7.01/61-Python_in_JOBs/README.md)
-
-### Fluidic device
-
-- [ARIA fluidic control](NIS_v7.01/62-Aria_fluidic_control/README.md)
-
-### External form
-
-- [Simple external text editor](NIS_v7.01/63-Simple_text_area/README.md)
+## Examples for NIS-Elements version 7.10 (Current)
 
 ### Interactive scatter plot
 
-- [Interactive scatter plot](NIS_v7.01/64-Interactive_scatter_plot/README.md)
+- [Python in JOBs with runtime form](NIS_v7.10/61-Python_in_JOBs/README.md)
 
-## Examples for NIS-Elements version 6.20 (Current)
+- [Interactive scatter plot in Python task](NIS_v7.10/64-Interactive_scatter_plot/README.md)
+
+## Examples for NIS-Elements version 7.01
+
+- [Which GA3 task to use for what](NIS_v7.01/51-GA3_in_JOBs/README.md)
+
+- [Python in JOBs](NIS_v7.01/61-Python_in_JOBs/README.md)
+
+- [ARIA fluidic control device](NIS_v7.01/62-Aria_fluidic_control/README.md)
+
+- [Simple external text editor](NIS_v7.01/63-Simple_text_area/README.md)
+
+- [Interactive scatter plot in web browser](NIS_v7.01/64-Interactive_scatter_plot/README.md)
+
+## Examples for NIS-Elements version 6.20
 
 ### Focus & Z‑Stack
 
