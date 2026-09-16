@@ -6,9 +6,9 @@ Examples are organized into folders based on NIS Elements version which they wer
 
 ### Interactive scatter plot
 
-- [Python in JOBs with runtime form](NIS_v7.10/61-Python_in_JOBs/README.md)
+- [Python in JOBs with runtime form](NIS_v7.10/61-Python_in_JOBs)
 
-- [Interactive scatter plot in Python task](NIS_v7.10/64-Interactive_scatter_plot/README.md)
+- [Interactive scatter plot in Python task](NIS_v7.10/64-Interactive_scatter_plot)
 
 ## Examples for NIS-Elements version 7.01
 

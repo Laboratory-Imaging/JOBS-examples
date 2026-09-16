@@ -137,9 +137,37 @@ In a Python script, Filepath parameters are treated as string variables.
 ### Runtime form
 Runtime form allows you to show the custom web GUI in the Python tasks runtime wizard and interact with it. More about this feature in [this](../64-Interactive_scatter_plot/README.md) example.
 
-You can enable this feature by opening the new tab called Runtime form in Python task GUI and checking the checkbox. After that the text field for pasting the path to the server shows.
+You can enable this feature by opening the new tab called Runtime form in Python task GUI, checking the checkbox and filling the path to the JSON with server definition (config.json).
+
+![Runtime Form](/NIS_v7.10/61-Python_in_JOBs/images/python-runtime-form-gui.png)
 
 For this purpose, the limjob API was expanded by a new object RuntimeForm containing few methods to work with the server.
+
+<details>
+<summary>JSON server definition</summary>
+
+config.json defines the local server connection, how the server is started, and the URL endpoints used by the Runtime Form.
+
+- api_version — required; configuration format version.
+- name, version, description — optional; plugin identification and description.
+- optimal_width — optional; preferred Runtime Form window width in pixels.
+- endpoint — required; server address:
+  - scheme — required, e.g. http;
+  - host — required, server address;
+  - port — required, server port.
+- routes — required; URL paths appended to the endpoint address (these paths are use-case specific):
+  - gui — user interface page;
+  - value — value exchange between JOBS and the server;
+  - health — server availability check;
+  - selected — by scatterplot example to retrieve points selected by the user.
+- runtime — optional; polling intervals and timeout values, in milliseconds, for server startup, health checks, and value synchronization. Default values are used if omitted.
+- server_process — required; defines how the server is started:
+  - program — required, path to the executable;
+  - args — optional, array of program arguments.
+
+The program and args values may use the {{ROOT}}, {{SCHEME}}, {{HOST}}, and {{PORT}} placeholders, which are resolved at runtime.
+
+</details>
 
 ### Input Images
 You can add a new input image by clicking the `+` button and selecting an image from the drop-down menu.
