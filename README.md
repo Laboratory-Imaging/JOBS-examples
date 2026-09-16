@@ -2,7 +2,7 @@
 
 Examples are organized into folders based on NIS Elements version which they were made with.
 
-## Examples for NIS-Elements version 7.10 (Current)
+## Examples for NIS-Elements version 7.10 (Coming soon)
 
 ### Interactive scatter plot
 
