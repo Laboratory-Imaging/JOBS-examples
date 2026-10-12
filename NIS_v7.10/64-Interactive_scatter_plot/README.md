@@ -18,7 +18,7 @@ Specifically it:
 
 ## Server
 
-1. [Download](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.01/64-Interactive_scatter_plot/scatterplot_server.zip) and unzip the [server](./scatterplot_server/) files into a folder. For example:
+1. [Download](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.10/64-Interactive_scatter_plot/scatterplot_server.zip) and unzip the [server](./scatterplot_server/) files into a folder. For example:
 
 ```bat
 %userprofile%\Documents\scatterplot_server
@@ -49,7 +49,7 @@ It is OK as it is the JOBS that populates the points.
 ## JOBS
 
 This is the minimalistic [job](https://laboratory-imaging.github.io/JOBS-examples/NIS_v7.01/64-Interactive_scatter_plot/Server_Example.html)
-[[Download link](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.01/64-Interactive_scatter_plot/Server_Example.bin)].
+[[Download link](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.10/64-Interactive_scatter_plot/Server_Example.bin)].
 
 ![JOB definition](images/Job%20definition.png)
 
@@ -61,7 +61,7 @@ The noteworthy parts is
 ## GA3
 
 The GA3 [recipe](https://laboratory-imaging.github.io/JOBS-examples/NIS_v7.01/64-Interactive_scatter_plot/Detect_cells.html)
-[[Download link](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.01/64-Interactive_scatter_plot/Detect_cells.ga3)]
+[[Download link](https://lim-public-af010c85-0d3e-4156-9378-5adc1bbef7b3.s3.eu-central-1.amazonaws.com/GitHubAssets/JOBS_Examples/NIS_v7.10/64-Interactive_scatter_plot/Detect_cells.ga3)]
 is simple too:
 
 - Segmentation (Threshold) and
