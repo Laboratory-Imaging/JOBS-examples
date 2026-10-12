@@ -28,6 +28,8 @@ After we've determined the exposure for all of the wells, we need to aggregate t
 
 Finally, we can move onto capturing the whole plate. We will select all wells in the plate and in a loop move to their centers and capture the images:
 
+The final capture loop uses `WellSelection.Selection`, the full-plate selection. `WellsForAutosignal.Selection` is used only for representative-well autosignal measurements and their aggregation.
+
 
 ![Full Selection Task](../15-Autosignal_on_plate/images/full_selection_task.png)
 
