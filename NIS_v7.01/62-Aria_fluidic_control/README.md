@@ -1,4 +1,4 @@
-# Aria fluidic control
+# Aria fluidic control device
 
 The goal of this example is to show how to install the Aria SDK Python package and use it from a NIS-Elements JOBS Python Loop to simulate fluidic control with an ARIA Sequence.
 
@@ -191,6 +191,10 @@ def loop_step(loop: limjob.Loop, Job: limjob.JobParam, ctx: limjob.RunContext) -
 The `Python Loop` task should now look like the screenshot below (parameter created and code pasted).
 
 ![Variables Task](../62-Aria_fluidic_control/images/PythonLoopTaskComplete.png)
+
+> [!WARNING]
+>
+> A few fixes were made in the Python code. For the fixed version, please download [these Python files](./Python). Then they need to be placed in the path, where the NIS-Elements is installed (Program Files\NIS-Elements\Python\Lib\site-packages). The limjob_aria.py file needs to be replaced and the limjob_aria_worker.py file is the new one.
 
 ### Capture (current) Task
 
